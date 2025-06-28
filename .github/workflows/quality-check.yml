@@ -1,0 +1,82 @@
+name: Code Quality Check
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run ESLint with annotations
+      run: |
+        npm run lint -- --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
+      continue-on-error: true
+    
+    - name: Upload ESLint results to GitHub
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: eslint-results.sarif
+        wait-for-processing: true
+    
+    - name: Run Prettier check
+      run: npm run format:check
+    
+    - name: Check for TODO/FIXME comments
+      run: |
+        if grep -r "TODO\|FIXME" src/ --exclude-dir=node_modules; then
+          echo "⚠️  Found TODO/FIXME comments. Please address them before merging."
+          exit 1
+        else
+          echo "✅ No TODO/FIXME comments found."
+        fi
+    
+    - name: Check bundle size
+      run: |
+        npm run build
+        npx bundlesize
+    
+    - name: Run dependency vulnerability check
+      run: |
+        npm audit --audit-level=high
+        npx audit-ci --high
+    
+    - name: Check for unused dependencies
+      run: npx depcheck
+    
+    - name: Validate package.json
+      run: npx package-json-validator package.json
+    
+    - name: Check TypeScript compilation
+      run: npm run typecheck
+    
+    - name: Test coverage threshold check
+      run: |
+        npm run test:coverage -- --reporter=json --outputFile=coverage.json
+        node -e "
+          const coverage = require('./coverage.json');
+          const thresholds = { lines: 70, functions: 70, branches: 70, statements: 70 };
+          Object.keys(thresholds).forEach(key => {
+            if (coverage.total[key].pct < thresholds[key]) {
+              console.error(\`❌ ${key} coverage (${coverage.total[key].pct}%) is below threshold (${thresholds[key]}%)\`);
+              process.exit(1);
+            }
+          });
+          console.log('✅ All coverage thresholds met.');
+        "
