@@ -6,7 +6,11 @@
 
 ゴルフのスコア履歴を管理するWebアプリケーションで、ユーザーがゴルフスコアの記録を追跡・管理できるように設計されています。
 
-**基本的な仕様については `.claude/BasicSpec.md` を参照してください。**
+**詳細な設計については以下のドキュメントを参照してください：**
+- **基本仕様**: `.claude/BasicSpec.md`
+- **フロントエンド設計**: `.claude/FrontendDesign.md`
+- **バックエンドAPI設計**: `.claude/BackendDesign.md`
+- **データベース設計**: `.claude/DatabaseDesign.md`
 
 ## 技術スタック
 
