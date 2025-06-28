@@ -9,6 +9,11 @@ import {
   Paper,
   Avatar,
   Chip,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Skeleton,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -16,9 +21,12 @@ import {
   SportsGolf as GolfIcon,
   EmojiEvents as TrophyIcon,
   Timeline as TimelineIcon,
+  CalendarToday as CalendarIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../contexts/AuthContext';
+import { RoundService, StatsService } from '../../services/firestoreService';
 
 // スタッツカードコンポーネント
 interface StatsCardProps {
@@ -70,6 +78,32 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
+  // ユーザー統計取得
+  const {
+    data: userStats,
+    isLoading: statsLoading,
+  } = useQuery({
+    queryKey: ['userStats', currentUser?.uid],
+    queryFn: () => {
+      if (!currentUser) return null;
+      return StatsService.getUserStats(currentUser.uid);
+    },
+    enabled: !!currentUser,
+  });
+
+  // 最近のラウンド取得
+  const {
+    data: recentRounds,
+    isLoading: roundsLoading,
+  } = useQuery({
+    queryKey: ['recentRounds', currentUser?.uid],
+    queryFn: () => {
+      if (!currentUser) return null;
+      return RoundService.getRecentRounds(currentUser.uid, 3);
+    },
+    enabled: !!currentUser,
+  });
+
   return (
     <Box>
       {/* ウェルカムメッセージ */}
@@ -85,40 +119,80 @@ const Dashboard: React.FC = () => {
       {/* 統計カード */}
       <Grid container spacing={3} mb={3}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatsCard
-            title="総ラウンド数"
-            value={0}
-            subtitle="ラウンド"
-            icon={<GolfIcon />}
-            color="primary"
-          />
+          {statsLoading ? (
+            <Card>
+              <CardContent>
+                <Skeleton variant="text" width="60%" height={24} />
+                <Skeleton variant="text" width="40%" height={40} />
+                <Skeleton variant="text" width="50%" height={20} />
+              </CardContent>
+            </Card>
+          ) : (
+            <StatsCard
+              title="総ラウンド数"
+              value={userStats?.totalRounds || 0}
+              subtitle="ラウンド"
+              icon={<GolfIcon />}
+              color="primary"
+            />
+          )}
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatsCard
-            title="平均スコア"
-            value="-"
-            subtitle="まだラウンドがありません"
-            icon={<TrendingUpIcon />}
-            color="success"
-          />
+          {statsLoading ? (
+            <Card>
+              <CardContent>
+                <Skeleton variant="text" width="60%" height={24} />
+                <Skeleton variant="text" width="40%" height={40} />
+                <Skeleton variant="text" width="50%" height={20} />
+              </CardContent>
+            </Card>
+          ) : (
+            <StatsCard
+              title="平均スコア"
+              value={userStats?.averageScore ? Math.round(userStats.averageScore * 10) / 10 : '-'}
+              subtitle={userStats?.totalRounds ? 'ストローク' : 'まだラウンドがありません'}
+              icon={<TrendingUpIcon />}
+              color="success"
+            />
+          )}
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatsCard
-            title="ベストスコア"
-            value="-"
-            subtitle="記録なし"
-            icon={<TrophyIcon />}
-            color="warning"
-          />
+          {statsLoading ? (
+            <Card>
+              <CardContent>
+                <Skeleton variant="text" width="60%" height={24} />
+                <Skeleton variant="text" width="40%" height={40} />
+                <Skeleton variant="text" width="50%" height={20} />
+              </CardContent>
+            </Card>
+          ) : (
+            <StatsCard
+              title="ベストスコア"
+              value={userStats?.bestScore || '-'}
+              subtitle={userStats?.bestScore ? 'ストローク' : '記録なし'}
+              icon={<TrophyIcon />}
+              color="warning"
+            />
+          )}
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatsCard
-            title="今月のラウンド"
-            value={0}
-            subtitle="ラウンド"
-            icon={<TimelineIcon />}
-            color="secondary"
-          />
+          {statsLoading ? (
+            <Card>
+              <CardContent>
+                <Skeleton variant="text" width="60%" height={24} />
+                <Skeleton variant="text" width="40%" height={40} />
+                <Skeleton variant="text" width="50%" height={20} />
+              </CardContent>
+            </Card>
+          ) : (
+            <StatsCard
+              title="今年のラウンド"
+              value={userStats?.thisYear?.rounds || 0}
+              subtitle="ラウンド"
+              icon={<TimelineIcon />}
+              color="secondary"
+            />
+          )}
         </Grid>
       </Grid>
 
@@ -165,37 +239,104 @@ const Dashboard: React.FC = () => {
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                最近のラウンド
-              </Typography>
-              
-              {/* ラウンドがない場合のメッセージ */}
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-                py={4}
-                color="text.secondary"
-              >
-                <GolfIcon sx={{ fontSize: 48, mb: 2, opacity: 0.5 }} />
-                <Typography variant="body1" gutterBottom>
-                  まだラウンドが記録されていません
-                </Typography>
-                <Typography variant="body2" textAlign="center">
-                  最初のラウンドを記録して
-                  <br />
-                  スコア管理を始めましょう！
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <Typography variant="h6">
+                  最近のラウンド
                 </Typography>
                 <Button
-                  variant="text"
-                  startIcon={<AddIcon />}
-                  onClick={() => navigate('/rounds/new')}
-                  sx={{ mt: 2 }}
+                  size="small"
+                  onClick={() => navigate('/rounds')}
                 >
-                  ラウンドを記録する
+                  すべて見る
                 </Button>
               </Box>
+              
+              {roundsLoading ? (
+                <Box>
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <Box key={index} mb={2}>
+                      <Box display="flex" alignItems="center" gap={2}>
+                        <Skeleton variant="circular" width={40} height={40} />
+                        <Box flex={1}>
+                          <Skeleton variant="text" width="70%" height={20} />
+                          <Skeleton variant="text" width="50%" height={16} />
+                        </Box>
+                        <Skeleton variant="text" width={60} height={20} />
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              ) : recentRounds && recentRounds.length > 0 ? (
+                <List>
+                  {recentRounds.map((round, index) => (
+                    <ListItem
+                      key={round.id}
+                      divider={index < recentRounds.length - 1}
+                      sx={{
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: 'action.hover',
+                        },
+                      }}
+                      onClick={() => navigate(`/rounds/${round.id}`)}
+                    >
+                      <ListItemAvatar>
+                        <Avatar sx={{ bgcolor: 'primary.main' }}>
+                          <CalendarIcon />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={round.courseName}
+                        secondary={
+                          <Box>
+                            <Typography variant="body2" component="span">
+                              {round.playDate}
+                            </Typography>
+                            <Typography variant="body2" component="span" sx={{ ml: 1 }}>
+                              {round.participants.length}名
+                            </Typography>
+                          </Box>
+                        }
+                      />
+                      <Box textAlign="right">
+                        <Typography variant="h6" color="primary">
+                          {round.totalScore}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {round.totalScore - round.totalPar > 0 ? '+' : ''}{round.totalScore - round.totalPar}
+                        </Typography>
+                      </Box>
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  justifyContent="center"
+                  py={4}
+                  color="text.secondary"
+                >
+                  <GolfIcon sx={{ fontSize: 48, mb: 2, opacity: 0.5 }} />
+                  <Typography variant="body1" gutterBottom>
+                    まだラウンドが記録されていません
+                  </Typography>
+                  <Typography variant="body2" textAlign="center">
+                    最初のラウンドを記録して
+                    <br />
+                    スコア管理を始めましょう！
+                  </Typography>
+                  <Button
+                    variant="text"
+                    startIcon={<AddIcon />}
+                    onClick={() => navigate('/rounds/new')}
+                    sx={{ mt: 2 }}
+                  >
+                    ラウンドを記録する
+                  </Button>
+                </Box>
+              )}
             </CardContent>
           </Card>
         </Grid>
