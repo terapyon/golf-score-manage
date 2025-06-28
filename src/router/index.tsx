@@ -17,61 +17,29 @@ const PageLoader: React.FC = () => (
 );
 
 // 遅延読み込み用のページコンポーネント
-const LazyDashboard = React.lazy(() => import('../pages/dashboard/Dashboard'));
-const LazyRoundsList = React.lazy(() => import('../pages/rounds/RoundsList'));
-const LazyRoundDetail = React.lazy(() => import('../pages/rounds/RoundDetail'));
-const LazyRoundForm = React.lazy(() => import('../pages/rounds/RoundForm'));
-const LazyProfile = React.lazy(() => import('../pages/profile/Profile'));
 const LazyLogin = React.lazy(() => import('../pages/auth/Login'));
 const LazyRegister = React.lazy(() => import('../pages/auth/Register'));
-
-// 一時的なプレースホルダーコンポーネント（実際のページが実装されるまで）
-const Dashboard: React.FC = () => (
-  <Box p={3}>
-    <h1>ダッシュボード</h1>
-    <p>環境セットアップ完了！</p>
-  </Box>
-);
+const LazyProfile = React.lazy(() => import('../pages/profile/Profile'));
+const LazyDashboard = React.lazy(() => import('../pages/dashboard/Dashboard'));
 
 const RoundsList: React.FC = () => (
   <Box p={3}>
     <h1>ラウンド一覧</h1>
-    <p>ラウンド一覧ページ（実装予定）</p>
+    <p>ラウンド一覧ページ（Phase 3で実装予定）</p>
   </Box>
 );
 
 const RoundDetail: React.FC = () => (
   <Box p={3}>
     <h1>ラウンド詳細</h1>
-    <p>ラウンド詳細ページ（実装予定）</p>
+    <p>ラウンド詳細ページ（Phase 3で実装予定）</p>
   </Box>
 );
 
 const RoundForm: React.FC = () => (
   <Box p={3}>
     <h1>ラウンド入力</h1>
-    <p>ラウンド入力ページ（実装予定）</p>
-  </Box>
-);
-
-const Profile: React.FC = () => (
-  <Box p={3}>
-    <h1>プロフィール</h1>
-    <p>プロフィールページ（実装予定）</p>
-  </Box>
-);
-
-const Login: React.FC = () => (
-  <Box p={3}>
-    <h1>ログイン</h1>
-    <p>ログインページ（実装予定）</p>
-  </Box>
-);
-
-const Register: React.FC = () => (
-  <Box p={3}>
-    <h1>新規登録</h1>
-    <p>新規登録ページ（実装予定）</p>
+    <p>ラウンド入力ページ（Phase 3で実装予定）</p>
   </Box>
 );
 
@@ -109,7 +77,7 @@ export const router = createBrowserRouter([
     path: '/login',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <Login />
+        <LazyLogin />
       </Suspense>
     ),
     errorElement: <ErrorPage />,
@@ -118,7 +86,7 @@ export const router = createBrowserRouter([
     path: '/register',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <Register />
+        <LazyRegister />
       </Suspense>
     ),
     errorElement: <ErrorPage />,
@@ -142,7 +110,7 @@ export const router = createBrowserRouter([
         path: 'dashboard',
         element: (
           <Suspense fallback={<PageLoader />}>
-            <Dashboard />
+            <LazyDashboard />
           </Suspense>
         ),
       },
@@ -187,7 +155,7 @@ export const router = createBrowserRouter([
         path: 'profile',
         element: (
           <Suspense fallback={<PageLoader />}>
-            <Profile />
+            <LazyProfile />
           </Suspense>
         ),
       },
