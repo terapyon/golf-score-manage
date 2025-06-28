@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "golf-score-manager-dev"
-  }
+    "default": "golf-score-manager-prod",
+    "staging": "golf-score-manager-staging", 
+    "production": "golf-score-manager-prod"
+  },
+  "targets": {},
+  "etags": {}
 }
