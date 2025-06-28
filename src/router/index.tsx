@@ -21,27 +21,9 @@ const LazyLogin = React.lazy(() => import('../pages/auth/Login'));
 const LazyRegister = React.lazy(() => import('../pages/auth/Register'));
 const LazyProfile = React.lazy(() => import('../pages/profile/Profile'));
 const LazyDashboard = React.lazy(() => import('../pages/dashboard/Dashboard'));
-
-const RoundsList: React.FC = () => (
-  <Box p={3}>
-    <h1>ラウンド一覧</h1>
-    <p>ラウンド一覧ページ（Phase 3で実装予定）</p>
-  </Box>
-);
-
-const RoundDetail: React.FC = () => (
-  <Box p={3}>
-    <h1>ラウンド詳細</h1>
-    <p>ラウンド詳細ページ（Phase 3で実装予定）</p>
-  </Box>
-);
-
-const RoundForm: React.FC = () => (
-  <Box p={3}>
-    <h1>ラウンド入力</h1>
-    <p>ラウンド入力ページ（Phase 3で実装予定）</p>
-  </Box>
-);
+const LazyRoundsList = React.lazy(() => import('../pages/rounds/RoundsList'));
+const LazyRoundDetail = React.lazy(() => import('../pages/rounds/RoundDetail'));
+const LazyRoundForm = React.lazy(() => import('../pages/rounds/RoundForm'));
 
 // エラーページコンポーネント
 const NotFound: React.FC = () => (
@@ -121,7 +103,7 @@ export const router = createBrowserRouter([
             index: true,
             element: (
               <Suspense fallback={<PageLoader />}>
-                <RoundsList />
+                <LazyRoundsList />
               </Suspense>
             ),
           },
@@ -129,7 +111,7 @@ export const router = createBrowserRouter([
             path: 'new',
             element: (
               <Suspense fallback={<PageLoader />}>
-                <RoundForm />
+                <LazyRoundForm />
               </Suspense>
             ),
           },
@@ -137,7 +119,7 @@ export const router = createBrowserRouter([
             path: ':id',
             element: (
               <Suspense fallback={<PageLoader />}>
-                <RoundDetail />
+                <LazyRoundDetail />
               </Suspense>
             ),
           },
@@ -145,7 +127,7 @@ export const router = createBrowserRouter([
             path: ':id/edit',
             element: (
               <Suspense fallback={<PageLoader />}>
-                <RoundForm />
+                <LazyRoundForm />
               </Suspense>
             ),
           },
