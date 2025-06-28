@@ -3,6 +3,7 @@ import { getAuth, connectAuthEmulator } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
+import { getAnalytics } from 'firebase/analytics';
 
 // Firebase設定
 const firebaseConfig = {
@@ -12,7 +13,14 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
+
+// 環境情報の取得
+const isEmulatorMode = import.meta.env.VITE_FIREBASE_USE_EMULATOR === 'true';
+const environment = import.meta.env.VITE_ENVIRONMENT || 'development';
+
+console.log(`🔥 Firebase初期化: ${environment}環境 ${isEmulatorMode ? '(エミュレーター)' : '(クラウド)'}`);
 
 // Firebaseアプリの初期化
 const app = initializeApp(firebaseConfig);
@@ -20,29 +28,53 @@ const app = initializeApp(firebaseConfig);
 // 各サービスの初期化
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const functions = getFunctions(app);
+export const functions = getFunctions(app, 'asia-northeast1'); // 東京リージョン
 export const storage = getStorage(app);
 
-// 開発環境でのエミュレーター接続
-if (import.meta.env.DEV && import.meta.env.VITE_DEV_MODE === 'true') {
-  // 既に接続されているかチェックして、重複接続を防ぐ
-  if (!auth.config.emulator) {
-    connectAuthEmulator(auth, 'http://localhost:9099');
+// Analytics（本番環境のみ）
+export let analytics: any = null;
+if (!isEmulatorMode && typeof window !== 'undefined' && firebaseConfig.measurementId) {
+  try {
+    analytics = getAnalytics(app);
+  } catch (error) {
+    console.warn('Analytics initialization failed:', error);
   }
+}
+
+// エミュレーター接続（ローカル開発環境）
+if (isEmulatorMode) {
+  console.log('🔧 Firebase エミュレーターに接続中...');
   
-  // @ts-ignore - Firestoreエミュレーターの重複接続チェック
-  if (!db._delegate._databaseId.projectId.includes('demo-')) {
+  try {
+    // 認証エミュレーター
+    connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+    console.log('✅ Auth エミュレーター接続');
+  } catch (error) {
+    console.warn('Auth エミュレーター接続失敗:', error);
+  }
+
+  try {
+    // Firestoreエミュレーター
     connectFirestoreEmulator(db, 'localhost', 8080);
+    console.log('✅ Firestore エミュレーター接続');
+  } catch (error) {
+    console.warn('Firestore エミュレーター接続失敗:', error);
   }
-  
-  // @ts-ignore - Functionsエミュレーターの重複接続チェック  
-  if (!functions._delegate._url) {
+
+  try {
+    // Functionsエミュレーター
     connectFunctionsEmulator(functions, 'localhost', 5001);
+    console.log('✅ Functions エミュレーター接続');
+  } catch (error) {
+    console.warn('Functions エミュレーター接続失敗:', error);
   }
-  
-  // @ts-ignore - Storageエミュレーターの重複接続チェック
-  if (!storage._delegate._host.includes('localhost')) {
+
+  try {
+    // Storageエミュレーター
     connectStorageEmulator(storage, 'localhost', 9199);
+    console.log('✅ Storage エミュレーター接続');
+  } catch (error) {
+    console.warn('Storage エミュレーター接続失敗:', error);
   }
 }
 
