@@ -1,44 +1,44 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、このリポジトリでコードを扱う際のClaude Code (claude.ai/code) へのガイダンスを提供します。
 
-## Project Overview
+## プロジェクト概要
 
-This is a golf score management web application (ゴルフのスコア履歴を管理するWebアプリ) designed to help users track and manage their golf score history.
+ゴルフのスコア履歴を管理するWebアプリケーションで、ユーザーがゴルフスコアの記録を追跡・管理できるように設計されています。
 
-## Current State
+## 現在の状況
 
-This repository is in the initial setup phase and contains only basic scaffolding:
-- README.md with project description in Japanese
-- LICENSE file
-- .gitignore configured for Node.js projects
-- .devcontainer setup with Node.js and Python support
-- GitHub Dependabot configuration
+このリポジトリは初期セットアップ段階にあり、基本的な構成のみが含まれています：
+- 日本語でのプロジェクト説明を含むREADME.md
+- LICENSEファイル
+- Node.jsプロジェクト用に設定された.gitignore
+- Node.jsとPythonをサポートする.devcontainerセットアップ
+- GitHub Dependabotの設定
 
-## Missing Implementation
+## 未実装部分
 
-The project currently lacks:
-- package.json and dependency management
-- Source code directories and files
-- Build configuration
-- Testing setup
-- Actual application implementation
+プロジェクトには以下が不足しています：
+- package.jsonと依存関係管理
+- ソースコードのディレクトリとファイル
+- ビルド設定
+- テストセットアップ
+- 実際のアプリケーション実装
 
-## Development Environment
+## 開発環境
 
-The project is configured with:
-- **Devcontainer**: Supports both Node.js and Python development environments
-- **Git**: Repository initialized with comprehensive Node.js .gitignore
-- **GitHub**: Dependabot configured for devcontainer updates
+プロジェクトは以下で設定されています：
+- **Devcontainer**: Node.jsとPythonの両方の開発環境をサポート
+- **Git**: 包括的なNode.js用.gitignoreでリポジトリを初期化
+- **GitHub**: devcontainer更新用のDependabotを設定
 
-## Expected Architecture
+## 期待されるアーキテクチャ
 
-Based on the .gitignore configuration, this should be a Node.js-based web application. When implementing:
-- Use standard Node.js project structure with src/ directory
-- Include package.json with appropriate scripts for build, test, and development
-- Consider modern web frameworks suitable for a score tracking application
-- Implement proper database integration for score persistence
+.gitignoreの設定に基づき、これはNode.jsベースのWebアプリケーションであるべきです。実装時は：
+- src/ディレクトリを含む標準的なNode.jsプロジェクト構造を使用
+- ビルド、テスト、開発用の適切なスクリプトを含むpackage.jsonを含める
+- スコア追跡アプリケーションに適したモダンなWebフレームワークを検討
+- スコア永続化のための適切なデータベース統合を実装
 
-## Language Note
+## 言語に関する注記
 
-The project description is in Japanese, indicating this may be intended for Japanese users. Consider internationalization if expanding beyond Japanese market.
+プロジェクトの説明は日本語で書かれており、日本のユーザー向けに意図されている可能性があります。日本市場を超えて拡張する場合は国際化を検討してください。
