@@ -5,6 +5,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { theme } from '../theme';
+import { vi } from 'vitest';
+import { AuthProvider } from '../contexts/AuthContext';
 
 // カスタムレンダー関数
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
@@ -32,7 +34,9 @@ const AllTheProviders = ({
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <BrowserRouter>
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>
     </QueryClientProvider>

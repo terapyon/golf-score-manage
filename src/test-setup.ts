@@ -50,9 +50,11 @@ vi.mock('firebase/auth', () => ({
     onAuthStateChanged: vi.fn(),
   })),
   connectAuthEmulator: vi.fn(),
+  onAuthStateChanged: vi.fn(),
   signInWithEmailAndPassword: vi.fn(),
   createUserWithEmailAndPassword: vi.fn(),
   signOut: vi.fn(),
+  updateProfile: vi.fn(),
   GoogleAuthProvider: vi.fn(),
   signInWithPopup: vi.fn(),
 }));

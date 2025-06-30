@@ -1,41 +1,45 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { RoundService, CourseService, UserStatsService } from '../firestoreService';
 import { createMockRound, createMockCourse, createMockUser } from '@/utils/test-utils';
 import type { RoundFormData, RoundFilters } from '@/types';
 
-// Firebase Firestoreのモック
-const mockCollection = vi.fn();
-const mockDoc = vi.fn();
-const mockAddDoc = vi.fn();
-const mockSetDoc = vi.fn();
-const mockGetDoc = vi.fn();
-const mockGetDocs = vi.fn();
-const mockUpdateDoc = vi.fn();
-const mockDeleteDoc = vi.fn();
-const mockQuery = vi.fn();
-const mockWhere = vi.fn();
-const mockOrderBy = vi.fn();
-const mockLimit = vi.fn();
-const mockStartAfter = vi.fn();
-const mockServerTimestamp = vi.fn();
+// Firebase Firestoreのモック設定
+vi.mock('firebase/firestore', () => {
+  const mockCollection = vi.fn();
+  const mockDoc = vi.fn();
+  const mockAddDoc = vi.fn();
+  const mockSetDoc = vi.fn();
+  const mockGetDoc = vi.fn();
+  const mockGetDocs = vi.fn();
+  const mockUpdateDoc = vi.fn();
+  const mockDeleteDoc = vi.fn();
+  const mockQuery = vi.fn();
+  const mockWhere = vi.fn();
+  const mockOrderBy = vi.fn();
+  const mockLimit = vi.fn();
+  const mockStartAfter = vi.fn();
+  const mockServerTimestamp = vi.fn();
 
-vi.mock('firebase/firestore', () => ({
-  getFirestore: vi.fn(),
-  collection: mockCollection,
-  doc: mockDoc,
-  addDoc: mockAddDoc,
-  setDoc: mockSetDoc,
-  getDoc: mockGetDoc,
-  getDocs: mockGetDocs,
-  updateDoc: mockUpdateDoc,
-  deleteDoc: mockDeleteDoc,
-  query: mockQuery,
-  where: mockWhere,
-  orderBy: mockOrderBy,
-  limit: mockLimit,
-  startAfter: mockStartAfter,
-  serverTimestamp: mockServerTimestamp,
-}));
+  return {
+    getFirestore: vi.fn(),
+    collection: mockCollection,
+    doc: mockDoc,
+    addDoc: mockAddDoc,
+    setDoc: mockSetDoc,
+    getDoc: mockGetDoc,
+    getDocs: mockGetDocs,
+    updateDoc: mockUpdateDoc,
+    deleteDoc: mockDeleteDoc,
+    query: mockQuery,
+    where: mockWhere,
+    orderBy: mockOrderBy,
+    limit: mockLimit,
+    startAfter: mockStartAfter,
+    serverTimestamp: mockServerTimestamp,
+  };
+});
+
+// サービスのインポートをモック後に行う
+import { RoundService, CourseService, UserStatsService } from '../firestoreService';
 
 // モックデータ
 const mockRound = createMockRound();
