@@ -3,6 +3,7 @@ import { render, screen } from '@/utils/test-utils';
 import RoundForm from '../RoundForm';
 import { createMockCourse } from '@/utils/test-utils';
 import * as firestoreService from '@/services/firestoreService';
+import * as AuthContext from '@/contexts/AuthContext';
 
 // モックデータ
 const mockCourses = [
@@ -36,27 +37,51 @@ describe('RoundForm', () => {
     
     // CourseService のモック設定
     vi.mocked(firestoreService.CourseService.getAllCourses).mockResolvedValue(mockCourses);
+    
+    // useAuth モック
+    vi.spyOn(AuthContext, 'useAuth').mockReturnValue({
+      currentUser: {
+        uid: 'test-uid',
+        email: 'test@example.com',
+        name: 'Test User',
+        handicap: 15,
+        avatar: null,
+        preferences: {
+          defaultTee: 'レギュラー',
+          scoreDisplayMode: 'stroke' as const,
+          notifications: { email: true, push: true }
+        },
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      register: vi.fn(),
+      loginWithGoogle: vi.fn(),
+      updateUserProfile: vi.fn(),
+    });
   });
 
   it('フォームが正常にレンダリングされること', () => {
     render(<RoundForm />);
     
     // フォームの基本要素が表示されることを確認
-    expect(screen.getByText(/基本情報/i)).toBeInTheDocument();
+    expect(screen.getByText(/新しいラウンド/i)).toBeInTheDocument();
   });
 
   it('新規ラウンド作成モードで初期化されること', () => {
     render(<RoundForm />);
     
     // 新規作成の場合の要素が表示されることを確認
-    expect(screen.getByText(/基本情報/i)).toBeInTheDocument();
+    expect(screen.getByText(/新しいラウンド/i)).toBeInTheDocument();
   });
 
   it('ステッパーが正しく表示されること', () => {
     render(<RoundForm />);
     
     // ステッパーの要素が表示されることを確認
-    expect(screen.getByText(/基本情報/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/基本情報/i)).toHaveLength(2); // ステップラベルとタイトル
     expect(screen.getByText(/プレイヤー情報/i)).toBeInTheDocument();
   });
 });
