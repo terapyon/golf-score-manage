@@ -1,0 +1,22 @@
+FROM node:18-bullseye-slim
+
+# Java と必要なパッケージをインストール
+RUN apt-get update && apt-get install -y \
+    openjdk-11-jre-headless \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Firebase CLI をグローバルインストール
+RUN npm install -g firebase-tools
+
+# 作業ディレクトリを設定
+WORKDIR /workspace
+
+# Java と Firebase CLI のバージョンを確認
+RUN java -version && firebase --version
+
+# エミュレーター用ポートを公開
+EXPOSE 4000 5000 5001 8080 9099 9199
+
+# デフォルトコマンド
+CMD ["firebase", "emulators:start", "--only", "auth,firestore,functions,hosting,storage", "--project", "demo-project"]

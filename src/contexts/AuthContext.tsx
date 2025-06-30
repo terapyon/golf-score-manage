@@ -1,3 +1,4 @@
+// AuthContext - Firebase認証とユーザー管理
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   User,
