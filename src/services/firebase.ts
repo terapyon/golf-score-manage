@@ -5,20 +5,27 @@ import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
 
-// Firebase設定
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
-};
-
 // 環境情報の取得
-const isEmulatorMode = import.meta.env.VITE_FIREBASE_USE_EMULATOR === 'true';
-const environment = import.meta.env.VITE_ENVIRONMENT || 'development';
+const isEmulatorMode = process.env.VITE_FIREBASE_USE_EMULATOR === 'true';
+const environment = process.env.VITE_ENVIRONMENT || 'development';
+
+// Firebase設定
+const firebaseConfig = isEmulatorMode ? {
+  apiKey: "demo-key",
+  authDomain: "demo-project.firebaseapp.com", 
+  projectId: "demo-project",
+  storageBucket: "demo-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:demo",
+} : {
+  apiKey: process.env.VITE_FIREBASE_API_KEY,
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.VITE_FIREBASE_APP_ID,
+  measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID,
+};
 
 console.log(`🔥 Firebase初期化: ${environment}環境 ${isEmulatorMode ? '(エミュレーター)' : '(クラウド)'}`);
 
@@ -90,7 +97,7 @@ export const validateFirebaseConfig = (): boolean => {
   ];
 
   const missingVars = requiredVars.filter(
-    (varName) => !import.meta.env[varName]
+    (varName) => !process.env[varName]
   );
 
   if (missingVars.length > 0) {

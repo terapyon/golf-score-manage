@@ -33,23 +33,44 @@ npm install
 cp .env.local.example .env.local
 ```
 
-### 3. 開発サーバー起動
+### 3. ローカルエミュレータの起動
 
+#### 方法1: 簡単スクリプト実行（推奨）
+```bash
+# エミュレータ起動とテストデータ投入を一括実行
+./scripts/start-emulator.sh
+```
+
+#### 方法2: Docker Composeを使用
+```bash
+# Docker Composeでエミュレータを起動
+docker-compose up firebase-emulator
+
+# 別のターミナルでテストデータを投入
+docker-compose run seed-data
+```
+
+#### 方法3: 手動実行
 ```bash
 # ターミナル1: Firebase エミュレーター起動
 npm run emulators
 
-# ターミナル2: 開発サーバー起動  
+# ターミナル2: テストデータ投入
+node scripts/seed-data.js
+
+# ターミナル3: 開発サーバー起動  
 npm run dev
-
-# ブラウザで http://localhost:3000 にアクセス
 ```
 
-### 4. サンプルデータ投入
+### 4. アクセス可能なURL
+- **Firebase UI**: http://localhost:4000
+- **アプリケーション**: http://localhost:5000
+- **Firestore**: http://localhost:4000/firestore
+- **Authentication**: http://localhost:4000/auth
 
-```bash
-npm run seed:emulator
-```
+### 5. テスト用ログイン情報
+- **Email**: test@example.com
+- **Password**: test123456
 
 ## 🛠️ 技術スタック
 

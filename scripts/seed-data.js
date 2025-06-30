@@ -9,25 +9,21 @@ import {
   addDoc 
 } from 'firebase/firestore';
 
-// エミュレーター用設定
+// エミュレーター専用設定
 const firebaseConfig = {
   projectId: 'demo-project',
-  apiKey: 'demo-api-key',
-  authDomain: 'demo-project.firebaseapp.com',
-  storageBucket: 'demo-project.appspot.com',
-  messagingSenderId: '123456789',
-  appId: '1:123456789:web:demo'
+  // エミュレータ用の最小設定
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// エミュレーターに接続
+// エミュレーターに強制接続
 try {
-  connectFirestoreEmulator(db, 'localhost', 8080);
-  console.log('🔧 Firestore エミュレーターに接続');
+  connectFirestoreEmulator(db, 'firebase-emulator', 8080);
+  console.log('🔧 Firestore エミュレーターに接続: firebase-emulator:8080');
 } catch (error) {
-  console.log('エミュレーター接続スキップ（既に接続済み）');
+  console.log('エミュレーター接続スキップ（既に接続済み）:', error.message);
 }
 
 // サンプルコースデータ
@@ -154,7 +150,7 @@ const generateSampleRounds = (userId) => {
         par,
         strokes: Math.max(1, strokes),
         putts: Math.floor(Math.random() * 3) + 1,
-        fairwayHit: par > 3 ? Math.random() > 0.3 : undefined,
+        fairwayHit: par > 3 ? Math.random() > 0.3 : null,
         greenInRegulation: Math.random() > 0.4,
         penalties: Math.random() > 0.8 ? 1 : 0
       });
@@ -246,6 +242,25 @@ const generateSampleStats = (userId, rounds) => {
   };
 };
 
+// データクリーニング関数
+function cleanData(obj) {
+  const cleaned = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      if (value && typeof value === 'object' && value.constructor === Object) {
+        cleaned[key] = cleanData(value);
+      } else if (Array.isArray(value)) {
+        cleaned[key] = value.map(item => 
+          item && typeof item === 'object' ? cleanData(item) : item
+        ).filter(item => item !== undefined);
+      } else {
+        cleaned[key] = value;
+      }
+    }
+  }
+  return cleaned;
+}
+
 // データ投入メイン関数
 async function seedData() {
   console.log('🌱 サンプルデータの投入を開始...');
@@ -272,7 +287,8 @@ async function seedData() {
     console.log('🏌️ ラウンドデータを投入中...');
     const sampleRounds = generateSampleRounds(testUserId);
     for (const round of sampleRounds) {
-      await addDoc(collection(db, 'rounds'), round);
+      const cleanedRound = cleanData(round);
+      await addDoc(collection(db, 'rounds'), cleanedRound);
     }
     console.log(`✅ ラウンドデータ投入完了: ${sampleRounds.length}件`);
     
