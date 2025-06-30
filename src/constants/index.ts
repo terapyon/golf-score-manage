@@ -33,7 +33,7 @@ export const ROUTES = {
 // フォームバリデーション定数
 export const VALIDATION = {
   EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  PHONE_REGEX: /^[\d\-\(\)\+\s]+$/,
+  PHONE_REGEX: /^[\d\-()+ \s]+$/,
   PASSWORD_MIN_LENGTH: 8,
   NAME_MAX_LENGTH: 50,
   MEMO_MAX_LENGTH: 500,

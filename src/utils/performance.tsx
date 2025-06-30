@@ -1,4 +1,5 @@
 // パフォーマンス監視ユーティリティ
+import React from 'react';
 
 interface PerformanceMetric {
   name: string;
