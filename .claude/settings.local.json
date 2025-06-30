@@ -15,7 +15,8 @@
       "Bash(npm test:*)",
       "Bash(npx eslint:*)",
       "Bash(npm run lint)",
-      "Bash(./node_modules/.bin/eslint:*)"
+      "Bash(./node_modules/.bin/eslint:*)",
+      "Bash(echo \"Exit code: $?\")"
     ],
     "deny": []
   }
