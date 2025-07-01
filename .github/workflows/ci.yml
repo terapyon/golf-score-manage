@@ -53,9 +53,7 @@ jobs:
       run: npm run build
     
     - name: Run E2E tests
-      run: npm run test:e2e
-      env:
-        CI: true
+      run: npm run test:e2e:ci
     
     - name: Upload E2E test results
       uses: actions/upload-artifact@v4

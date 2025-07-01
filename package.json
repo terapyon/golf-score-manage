@@ -18,6 +18,7 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:e2e:ci": "CI=true playwright test --reporter=github",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",

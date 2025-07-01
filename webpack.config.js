@@ -88,6 +88,10 @@ module.exports = {
     port: 3000,
     host: '0.0.0.0',
     historyApiFallback: true,
-    hot: true,
+    hot: !process.env.CI, // Disable hot reload in CI
+    compress: true,
+    client: {
+      logging: process.env.CI ? 'error' : 'info', // Reduce logging in CI
+    },
   },
 };
