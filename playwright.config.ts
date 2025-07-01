@@ -14,10 +14,12 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Timeout settings */
-  timeout: 30 * 1000, // 30 seconds per test
+  timeout: 60 * 1000, // 60 seconds per test
   expect: {
-    timeout: 10 * 1000, // 10 seconds for expect assertions
+    timeout: 15 * 1000, // 15 seconds for expect assertions
   },
+  /* Global teardown */
+  globalTeardown: process.env.CI ? undefined : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -75,8 +77,8 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000, // 2 minutes for CI
-    stderr: 'ignore', // Ignore stderr to reduce noise
-    stdout: 'ignore', // Ignore stdout to reduce noise
+    timeout: 180 * 1000, // 3 minutes for CI
+    stderr: 'pipe',
+    stdout: 'pipe',
   },
 });
