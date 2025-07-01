@@ -53,8 +53,8 @@ class PerformanceMonitor {
       if (!navigation) return;
 
       const timing: NavigationTiming = {
-        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.navigationStart,
-        loadComplete: navigation.loadEventEnd - navigation.navigationStart,
+        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.fetchStart,
+        loadComplete: navigation.loadEventEnd - navigation.fetchStart,
         firstPaint: 0,
         firstContentfulPaint: 0,
       };
@@ -341,9 +341,10 @@ export function withPerformanceMonitoring<P extends object>(
   const displayName = componentName || WrappedComponent.displayName || WrappedComponent.name;
 
   return React.memo((props: P) => {
-    return performanceMonitor.measureRender(displayName, () => (
+    const result = performanceMonitor.measureRender(displayName, () => (
       <WrappedComponent {...props} />
     ));
+    return result as unknown as React.ReactElement;
   });
 }
 

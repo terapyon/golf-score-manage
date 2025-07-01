@@ -36,6 +36,6 @@
       "@/constants/*": ["src/constants/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "src/test-types.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

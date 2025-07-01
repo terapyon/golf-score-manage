@@ -31,7 +31,6 @@ const mockUser = createMockUser();
 
 const mockRoundFormData: RoundFormData = {
   courseId: mockRound.courseId,
-  courseName: mockRound.courseName,
   playDate: mockRound.playDate,
   startTime: mockRound.startTime,
   weather: mockRound.weather,

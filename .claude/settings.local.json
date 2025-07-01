@@ -16,7 +16,9 @@
       "Bash(npx eslint:*)",
       "Bash(npm run lint)",
       "Bash(./node_modules/.bin/eslint:*)",
-      "Bash(echo \"Exit code: $?\")"
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run test:*)"
     ],
     "deny": []
   }

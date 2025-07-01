@@ -10,7 +10,7 @@ const mockNavigate = vi.fn();
 
 // React Router のモック
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+  const actual = await vi.importActual('react-router-dom') as any;
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -55,7 +55,7 @@ describe('Login', () => {
         email: 'test@example.com', 
         name: 'Test User',
         handicap: 15,
-        avatar: null,
+        avatar: undefined,
         preferences: {
           defaultTee: 'レギュラー',
           scoreDisplayMode: 'stroke' as const,

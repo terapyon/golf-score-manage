@@ -14,7 +14,7 @@ const mockCourses = [
 // Firebase サービスのモック
 vi.mock('@/services/firestoreService', () => ({
   CourseService: {
-    getAllCourses: vi.fn(),
+    getCourses: vi.fn(),
   },
   RoundService: {
     createRound: vi.fn(),
@@ -23,7 +23,7 @@ vi.mock('@/services/firestoreService', () => ({
 
 // React Router のモック
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+  const actual = await vi.importActual('react-router-dom') as any;
   return {
     ...actual,
     useNavigate: () => vi.fn(),
@@ -36,7 +36,7 @@ describe('RoundForm', () => {
     vi.clearAllMocks();
     
     // CourseService のモック設定
-    vi.mocked(firestoreService.CourseService.getAllCourses).mockResolvedValue(mockCourses);
+    vi.mocked(firestoreService.CourseService.getCourses).mockResolvedValue(mockCourses);
     
     // useAuth モック
     vi.spyOn(AuthContext, 'useAuth').mockReturnValue({
@@ -45,7 +45,7 @@ describe('RoundForm', () => {
         email: 'test@example.com',
         name: 'Test User',
         handicap: 15,
-        avatar: null,
+        avatar: undefined,
         preferences: {
           defaultTee: 'レギュラー',
           scoreDisplayMode: 'stroke' as const,
