@@ -23,11 +23,11 @@ import {
   CheckCircle as CheckIcon,
   Error as ErrorIcon,
 } from '@mui/icons-material';
-import { UseFormReturn } from 'react-hook-form';
+import { UseFormReturn, FieldValues } from 'react-hook-form';
 import { AutoSaveIndicator, useAutoSave } from './AutoSaveIndicator';
 
 // スマートフォームのプロパティ
-interface SmartFormProps<T> {
+interface SmartFormProps<T extends FieldValues> {
   form: UseFormReturn<T>;
   onSubmit: (data: T) => Promise<void>;
   steps?: FormStep<T>[];
@@ -38,7 +38,7 @@ interface SmartFormProps<T> {
   children?: React.ReactNode;
 }
 
-interface FormStep<T> {
+interface FormStep<T extends FieldValues> {
   label: string;
   description?: string;
   fields: (keyof T)[];
@@ -128,7 +128,7 @@ export const SmartField: React.FC<SmartFieldProps & { form: UseFormReturn<any> }
         type={type}
         placeholder={placeholder}
         error={hasError}
-        helperText={error?.message || helperText}
+        helperText={error?.message as string || helperText}
         disabled={disabled || isSubmitting}
         autoComplete={autoComplete}
         multiline={multiline}
@@ -161,7 +161,7 @@ export const SmartField: React.FC<SmartFieldProps & { form: UseFormReturn<any> }
 };
 
 // メインのスマートフォームコンポーネント
-export function SmartForm<T extends Record<string, any>>({
+export function SmartForm<T extends FieldValues>({
   form,
   onSubmit,
   steps = [],

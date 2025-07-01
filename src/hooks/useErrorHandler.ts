@@ -143,17 +143,7 @@ export function useErrorHandler() {
     }
 
     // トーストでエラー表示
-    showToast(
-      message,
-      'error',
-      {
-        autoHideDuration: retryable ? 6000 : 4000,
-        action: showRetry && retryable && onRetry ? {
-          label: '再試行',
-          onClick: onRetry,
-        } : undefined,
-      }
-    );
+    showToast(message, 'error');
 
     // エラーレポーティング（本番環境）
     if (process.env.NODE_ENV === 'production') {
