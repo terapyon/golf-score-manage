@@ -37,7 +37,10 @@ const COLLECTIONS = {
 // ラウンド関連のサービス
 export class RoundService {
   // ラウンド作成
-  static async createRound(userId: string, roundData: RoundFormData): Promise<string> {
+  static async createRound(
+    userId: string,
+    roundData: RoundFormData
+  ): Promise<string> {
     try {
       const round: Omit<Round, 'id'> = {
         userId,
@@ -49,9 +52,12 @@ export class RoundService {
         temperature: roundData.temperature,
         windSpeed: roundData.windSpeed,
         teeName: roundData.teeName,
-        totalScore: roundData.scores.reduce((sum, score) => sum + score.strokes, 0),
+        totalScore: roundData.scores.reduce(
+          (sum, score) => sum + score.strokes,
+          0
+        ),
         totalPar: roundData.scores.length * 4, // TODO: 実際のパー計算
-        scores: roundData.scores.map(score => ({
+        scores: roundData.scores.map((score) => ({
           ...score,
           par: 4, // TODO: 実際のパー取得
         })),
@@ -98,7 +104,10 @@ export class RoundService {
       }
 
       // ページネーション用のクエリ
-      const countQuery = query(collection(db, COLLECTIONS.ROUNDS), ...constraints);
+      const countQuery = query(
+        collection(db, COLLECTIONS.ROUNDS),
+        ...constraints
+      );
       const countSnapshot = await getDocs(countQuery);
       const total = countSnapshot.size;
 
@@ -110,7 +119,7 @@ export class RoundService {
       );
 
       const snapshot = await getDocs(dataQuery);
-      const rounds: Round[] = snapshot.docs.map(doc => ({
+      const rounds: Round[] = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
@@ -155,7 +164,10 @@ export class RoundService {
   }
 
   // ラウンド更新
-  static async updateRound(roundId: string, updates: Partial<RoundFormData>): Promise<void> {
+  static async updateRound(
+    roundId: string,
+    updates: Partial<RoundFormData>
+  ): Promise<void> {
     try {
       const docRef = doc(db, COLLECTIONS.ROUNDS, roundId);
       await updateDoc(docRef, {
@@ -180,7 +192,10 @@ export class RoundService {
   }
 
   // 最近のラウンド取得
-  static async getRecentRounds(userId: string, count: number = 5): Promise<Round[]> {
+  static async getRecentRounds(
+    userId: string,
+    count: number = 5
+  ): Promise<Round[]> {
     try {
       const q = query(
         collection(db, COLLECTIONS.ROUNDS),
@@ -190,7 +205,7 @@ export class RoundService {
       );
 
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({
+      return snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
@@ -215,7 +230,7 @@ export class CourseService {
       );
 
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({
+      return snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
@@ -261,7 +276,7 @@ export class CourseService {
       );
 
       const snapshot = await getDocs(q);
-      const courses = snapshot.docs.map(doc => ({
+      const courses = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
@@ -269,9 +284,10 @@ export class CourseService {
       })) as Course[];
 
       // クライアントサイドでフィルタリング
-      return courses.filter(course =>
-        course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.nameKana.toLowerCase().includes(searchTerm.toLowerCase())
+      return courses.filter(
+        (course) =>
+          course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          course.nameKana.toLowerCase().includes(searchTerm.toLowerCase())
       );
     } catch (error) {
       console.error('Error searching courses:', error);
@@ -313,7 +329,7 @@ export class StatsService {
       );
 
       const roundsSnapshot = await getDocs(roundsQuery);
-      const rounds: Round[] = roundsSnapshot.docs.map(doc => ({
+      const rounds: Round[] = roundsSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
@@ -358,33 +374,38 @@ export class StatsService {
       }
 
       // 統計計算
-      const scores = rounds.map(r => r.totalScore);
+      const scores = rounds.map((r) => r.totalScore);
       const totalRounds = rounds.length;
-      const averageScore = scores.reduce((sum, score) => sum + score, 0) / totalRounds;
+      const averageScore =
+        scores.reduce((sum, score) => sum + score, 0) / totalRounds;
       const bestScore = Math.min(...scores);
       const worstScore = Math.max(...scores);
 
       // 直近5ラウンドの統計
       const last5Rounds = rounds.slice(0, 5);
-      const last5Average = last5Rounds.length > 0
-        ? last5Rounds.reduce((sum, r) => sum + r.totalScore, 0) / last5Rounds.length
-        : 0;
+      const last5Average =
+        last5Rounds.length > 0
+          ? last5Rounds.reduce((sum, r) => sum + r.totalScore, 0) /
+            last5Rounds.length
+          : 0;
 
       // 直近10ラウンドの統計
       const last10Rounds = rounds.slice(0, 10);
-      const last10Average = last10Rounds.length > 0
-        ? last10Rounds.reduce((sum, r) => sum + r.totalScore, 0) / last10Rounds.length
-        : 0;
+      const last10Average =
+        last10Rounds.length > 0
+          ? last10Rounds.reduce((sum, r) => sum + r.totalScore, 0) /
+            last10Rounds.length
+          : 0;
 
       // 今年のラウンド統計
       const currentYear = new Date().getFullYear();
-      const thisYearRounds = rounds.filter(r => 
-        new Date(r.playDate).getFullYear() === currentYear
+      const thisYearRounds = rounds.filter(
+        (r) => new Date(r.playDate).getFullYear() === currentYear
       );
 
       // コース別統計
       const courseStats: { [courseId: string]: any } = {};
-      rounds.forEach(round => {
+      rounds.forEach((round) => {
         if (!courseStats[round.courseId]) {
           courseStats[round.courseId] = {
             courseName: round.courseName,
@@ -402,8 +423,8 @@ export class StatsService {
       });
 
       // コース別統計の平均計算
-      Object.keys(courseStats).forEach(courseId => {
-        courseStats[courseId].averageScore = 
+      Object.keys(courseStats).forEach((courseId) => {
+        courseStats[courseId].averageScore =
           courseStats[courseId].totalScore / courseStats[courseId].rounds;
         delete courseStats[courseId].totalScore;
       });
@@ -418,7 +439,7 @@ export class StatsService {
         last5Rounds: {
           averageScore: last5Average,
           improvement: 0, // TODO: 改善度計算
-          dates: last5Rounds.map(r => r.playDate),
+          dates: last5Rounds.map((r) => r.playDate),
         },
         last10Rounds: {
           averageScore: last10Average,
@@ -426,9 +447,11 @@ export class StatsService {
         },
         thisYear: {
           rounds: thisYearRounds.length,
-          averageScore: thisYearRounds.length > 0
-            ? thisYearRounds.reduce((sum, r) => sum + r.totalScore, 0) / thisYearRounds.length
-            : 0,
+          averageScore:
+            thisYearRounds.length > 0
+              ? thisYearRounds.reduce((sum, r) => sum + r.totalScore, 0) /
+                thisYearRounds.length
+              : 0,
         },
         courseStats,
         monthlyStats: {}, // TODO: 月別統計計算

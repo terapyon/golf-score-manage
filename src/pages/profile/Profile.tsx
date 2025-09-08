@@ -25,13 +25,16 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUIStore } from '../../store/uiStore';
-import { profileUpdateSchema, type ProfileUpdateFormData } from '../../utils/validationSchemas';
+import {
+  profileUpdateSchema,
+  type ProfileUpdateFormData,
+} from '../../utils/validationSchemas';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const Profile: React.FC = () => {
   const { currentUser, updateUserProfile } = useAuth();
   const { showToast } = useUIStore();
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,7 +50,8 @@ const Profile: React.FC = () => {
       handicap: currentUser?.handicap || 0,
       preferences: {
         defaultTee: currentUser?.preferences?.defaultTee || 'レギュラー',
-        scoreDisplayMode: currentUser?.preferences?.scoreDisplayMode || 'stroke',
+        scoreDisplayMode:
+          currentUser?.preferences?.scoreDisplayMode || 'stroke',
         notifications: {
           email: currentUser?.preferences?.notifications?.email ?? true,
           push: currentUser?.preferences?.notifications?.push ?? true,
@@ -85,12 +89,12 @@ const Profile: React.FC = () => {
   ];
 
   if (!currentUser) {
-    return <LoadingSpinner message="プロフィール情報を読み込み中..." />;
+    return <LoadingSpinner message='プロフィール情報を読み込み中...' />;
   }
 
   return (
     <Box p={3}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant='h4' gutterBottom>
         プロフィール
       </Typography>
 
@@ -99,7 +103,7 @@ const Profile: React.FC = () => {
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Box display="flex" alignItems="center" mb={3}>
+              <Box display='flex' alignItems='center' mb={3}>
                 <Avatar
                   src={currentUser.avatar}
                   sx={{ width: 80, height: 80, mr: 2 }}
@@ -107,11 +111,11 @@ const Profile: React.FC = () => {
                   {currentUser.name?.charAt(0) || <PersonIcon />}
                 </Avatar>
                 <Box>
-                  <Typography variant="h6">{currentUser.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant='h6'>{currentUser.name}</Typography>
+                  <Typography variant='body2' color='text.secondary'>
                     {currentUser.email}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant='body2' color='text.secondary'>
                     ハンディキャップ: {currentUser.handicap}
                   </Typography>
                 </Box>
@@ -119,7 +123,7 @@ const Profile: React.FC = () => {
 
               {!isEditing && (
                 <Button
-                  variant="outlined"
+                  variant='outlined'
                   startIcon={<EditIcon />}
                   onClick={() => setIsEditing(true)}
                   fullWidth
@@ -135,26 +139,26 @@ const Profile: React.FC = () => {
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant='h6' gutterBottom>
                 統計情報
               </Typography>
-              <Box display="flex" justifyContent="space-between" mb={1}>
-                <Typography variant="body2" color="text.secondary">
+              <Box display='flex' justifyContent='space-between' mb={1}>
+                <Typography variant='body2' color='text.secondary'>
                   総ラウンド数
                 </Typography>
-                <Typography variant="body2">0</Typography>
+                <Typography variant='body2'>0</Typography>
               </Box>
-              <Box display="flex" justifyContent="space-between" mb={1}>
-                <Typography variant="body2" color="text.secondary">
+              <Box display='flex' justifyContent='space-between' mb={1}>
+                <Typography variant='body2' color='text.secondary'>
                   平均スコア
                 </Typography>
-                <Typography variant="body2">-</Typography>
+                <Typography variant='body2'>-</Typography>
               </Box>
-              <Box display="flex" justifyContent="space-between">
-                <Typography variant="body2" color="text.secondary">
+              <Box display='flex' justifyContent='space-between'>
+                <Typography variant='body2' color='text.secondary'>
                   ベストスコア
                 </Typography>
-                <Typography variant="body2">-</Typography>
+                <Typography variant='body2'>-</Typography>
               </Box>
             </CardContent>
           </Card>
@@ -164,28 +168,28 @@ const Profile: React.FC = () => {
         {isEditing && (
           <Grid item xs={12}>
             <Paper elevation={1} sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant='h6' gutterBottom>
                 プロフィール編集
               </Typography>
 
               {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
+                <Alert severity='error' sx={{ mb: 2 }}>
                   {error}
                 </Alert>
               )}
 
-              <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+              <Box component='form' onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
                   {/* 名前 */}
                   <Grid item xs={12} sm={6}>
                     <Controller
-                      name="name"
+                      name='name'
                       control={control}
                       render={({ field }) => (
                         <TextField
                           {...field}
                           fullWidth
-                          label="名前"
+                          label='名前'
                           error={!!errors.name}
                           helperText={errors.name?.message}
                         />
@@ -196,14 +200,14 @@ const Profile: React.FC = () => {
                   {/* ハンディキャップ */}
                   <Grid item xs={12} sm={6}>
                     <Controller
-                      name="handicap"
+                      name='handicap'
                       control={control}
                       render={({ field: { onChange, value, ...field } }) => (
                         <TextField
                           {...field}
                           fullWidth
-                          label="ハンディキャップ"
-                          type="number"
+                          label='ハンディキャップ'
+                          type='number'
                           value={value}
                           onChange={(e) => onChange(Number(e.target.value))}
                           error={!!errors.handicap}
@@ -216,7 +220,7 @@ const Profile: React.FC = () => {
 
                   <Grid item xs={12}>
                     <Divider sx={{ my: 2 }} />
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant='h6' gutterBottom>
                       設定
                     </Typography>
                   </Grid>
@@ -224,14 +228,14 @@ const Profile: React.FC = () => {
                   {/* デフォルトティー */}
                   <Grid item xs={12} sm={6}>
                     <Controller
-                      name="preferences.defaultTee"
+                      name='preferences.defaultTee'
                       control={control}
                       render={({ field }) => (
                         <TextField
                           {...field}
                           fullWidth
                           select
-                          label="デフォルトティー"
+                          label='デフォルトティー'
                           error={!!errors.preferences?.defaultTee}
                           helperText={errors.preferences?.defaultTee?.message}
                         >
@@ -248,24 +252,24 @@ const Profile: React.FC = () => {
                   {/* スコア表示モード */}
                   <Grid item xs={12} sm={6}>
                     <Controller
-                      name="preferences.scoreDisplayMode"
+                      name='preferences.scoreDisplayMode'
                       control={control}
                       render={({ field }) => (
                         <TextField
                           {...field}
                           fullWidth
                           select
-                          label="スコア表示モード"
+                          label='スコア表示モード'
                         >
-                          <MenuItem value="stroke">ストローク</MenuItem>
-                          <MenuItem value="net">ネット</MenuItem>
+                          <MenuItem value='stroke'>ストローク</MenuItem>
+                          <MenuItem value='net'>ネット</MenuItem>
                         </TextField>
                       )}
                     />
                   </Grid>
 
                   <Grid item xs={12}>
-                    <Typography variant="subtitle1" gutterBottom>
+                    <Typography variant='subtitle1' gutterBottom>
                       通知設定
                     </Typography>
                   </Grid>
@@ -273,7 +277,7 @@ const Profile: React.FC = () => {
                   {/* メール通知 */}
                   <Grid item xs={12} sm={6}>
                     <Controller
-                      name="preferences.notifications.email"
+                      name='preferences.notifications.email'
                       control={control}
                       render={({ field: { value, onChange } }) => (
                         <FormControlLabel
@@ -283,7 +287,7 @@ const Profile: React.FC = () => {
                               onChange={(e) => onChange(e.target.checked)}
                             />
                           }
-                          label="メール通知"
+                          label='メール通知'
                         />
                       )}
                     />
@@ -292,7 +296,7 @@ const Profile: React.FC = () => {
                   {/* プッシュ通知 */}
                   <Grid item xs={12} sm={6}>
                     <Controller
-                      name="preferences.notifications.push"
+                      name='preferences.notifications.push'
                       control={control}
                       render={({ field: { value, onChange } }) => (
                         <FormControlLabel
@@ -302,7 +306,7 @@ const Profile: React.FC = () => {
                               onChange={(e) => onChange(e.target.checked)}
                             />
                           }
-                          label="プッシュ通知"
+                          label='プッシュ通知'
                         />
                       )}
                     />
@@ -310,9 +314,14 @@ const Profile: React.FC = () => {
 
                   {/* ボタン */}
                   <Grid item xs={12}>
-                    <Box display="flex" gap={2} justifyContent="flex-end" mt={2}>
+                    <Box
+                      display='flex'
+                      gap={2}
+                      justifyContent='flex-end'
+                      mt={2}
+                    >
                       <Button
-                        variant="outlined"
+                        variant='outlined'
                         startIcon={<CancelIcon />}
                         onClick={handleCancel}
                         disabled={isSubmitting}
@@ -320,8 +329,8 @@ const Profile: React.FC = () => {
                         キャンセル
                       </Button>
                       <Button
-                        type="submit"
-                        variant="contained"
+                        type='submit'
+                        variant='contained'
                         startIcon={<SaveIcon />}
                         disabled={isSubmitting || !isDirty}
                       >

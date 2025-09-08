@@ -72,6 +72,7 @@ module.exports = {
         'VITE_FIREBASE_USE_EMULATOR': JSON.stringify('true'),
         'VITE_FIREBASE_PROJECT_ID': JSON.stringify('demo-project'),
         'VITE_ENVIRONMENT': JSON.stringify('local'),
+        'VITE_FIREBASE_EMULATOR_HOST': JSON.stringify(process.env.VITE_FIREBASE_EMULATOR_HOST || 'localhost'),
         'VITE_FIREBASE_API_KEY': JSON.stringify('demo-api-key'),
         'VITE_FIREBASE_AUTH_DOMAIN': JSON.stringify('demo-project.firebaseapp.com'),
         'VITE_FIREBASE_STORAGE_BUCKET': JSON.stringify('demo-project.appspot.com'),

@@ -13,7 +13,7 @@ afterEach(() => {
 // グローバルモック設定
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -93,7 +93,7 @@ vi.mock('firebase/analytics', () => ({
 
 // React Router のモック
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom') as any;
+  const actual = (await vi.importActual('react-router-dom')) as any;
   return {
     ...actual,
     useNavigate: () => vi.fn(),

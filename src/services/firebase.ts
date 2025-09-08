@@ -8,26 +8,31 @@ import { getAnalytics } from 'firebase/analytics';
 // 環境情報の取得
 const isEmulatorMode = process.env.VITE_FIREBASE_USE_EMULATOR === 'true';
 const environment = process.env.VITE_ENVIRONMENT || 'development';
+const emulatorHost = process.env.VITE_FIREBASE_EMULATOR_HOST || 'localhost';
 
 // Firebase設定
-const firebaseConfig = isEmulatorMode ? {
-  apiKey: "demo-key",
-  authDomain: "demo-project.firebaseapp.com", 
-  projectId: "demo-project",
-  storageBucket: "demo-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:demo",
-} : {
-  apiKey: process.env.VITE_FIREBASE_API_KEY,
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.VITE_FIREBASE_APP_ID,
-  measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID,
-};
+const firebaseConfig = isEmulatorMode
+  ? {
+      apiKey: 'demo-key',
+      authDomain: 'demo-project.firebaseapp.com',
+      projectId: 'demo-project',
+      storageBucket: 'demo-project.appspot.com',
+      messagingSenderId: '123456789',
+      appId: '1:123456789:web:demo',
+    }
+  : {
+      apiKey: process.env.VITE_FIREBASE_API_KEY,
+      authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: process.env.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+      appId: process.env.VITE_FIREBASE_APP_ID,
+      measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID,
+    };
 
-console.log(`🔥 Firebase初期化: ${environment}環境 ${isEmulatorMode ? '(エミュレーター)' : '(クラウド)'}`);
+console.log(
+  `🔥 Firebase初期化: ${environment}環境 ${isEmulatorMode ? '(エミュレーター)' : '(クラウド)'}`
+);
 
 // Firebaseアプリの初期化
 const app = initializeApp(firebaseConfig);
@@ -40,7 +45,11 @@ export const storage = getStorage(app);
 
 // Analytics（本番環境のみ）
 export let analytics: any = null;
-if (!isEmulatorMode && typeof window !== 'undefined' && firebaseConfig.measurementId) {
+if (
+  !isEmulatorMode &&
+  typeof window !== 'undefined' &&
+  firebaseConfig.measurementId
+) {
   try {
     analytics = getAnalytics(app);
   } catch (error) {
@@ -50,36 +59,38 @@ if (!isEmulatorMode && typeof window !== 'undefined' && firebaseConfig.measureme
 
 // エミュレーター接続（ローカル開発環境）
 if (isEmulatorMode) {
-  console.log('🔧 Firebase エミュレーターに接続中...');
-  
+  console.log(`🔧 Firebase エミュレーターに接続中... (Host: ${emulatorHost})`);
+
   try {
     // 認証エミュレーター
-    connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
-    console.log('✅ Auth エミュレーター接続');
+    connectAuthEmulator(auth, `http://${emulatorHost}:9099`, {
+      disableWarnings: true,
+    });
+    console.log(`✅ Auth エミュレーター接続: ${emulatorHost}:9099`);
   } catch (error) {
     console.warn('Auth エミュレーター接続失敗:', error);
   }
 
   try {
     // Firestoreエミュレーター
-    connectFirestoreEmulator(db, 'localhost', 8080);
-    console.log('✅ Firestore エミュレーター接続');
+    connectFirestoreEmulator(db, emulatorHost, 8080);
+    console.log(`✅ Firestore エミュレーター接続: ${emulatorHost}:8080`);
   } catch (error) {
     console.warn('Firestore エミュレーター接続失敗:', error);
   }
 
   try {
     // Functionsエミュレーター
-    connectFunctionsEmulator(functions, 'localhost', 5001);
-    console.log('✅ Functions エミュレーター接続');
+    connectFunctionsEmulator(functions, emulatorHost, 5001);
+    console.log(`✅ Functions エミュレーター接続: ${emulatorHost}:5001`);
   } catch (error) {
     console.warn('Functions エミュレーター接続失敗:', error);
   }
 
   try {
     // Storageエミュレーター
-    connectStorageEmulator(storage, 'localhost', 9199);
-    console.log('✅ Storage エミュレーター接続');
+    connectStorageEmulator(storage, emulatorHost, 9199);
+    console.log(`✅ Storage エミュレーター接続: ${emulatorHost}:9199`);
   } catch (error) {
     console.warn('Storage エミュレーター接続失敗:', error);
   }
@@ -89,16 +100,14 @@ if (isEmulatorMode) {
 export const validateFirebaseConfig = (): boolean => {
   const requiredVars = [
     'VITE_FIREBASE_API_KEY',
-    'VITE_FIREBASE_AUTH_DOMAIN', 
+    'VITE_FIREBASE_AUTH_DOMAIN',
     'VITE_FIREBASE_PROJECT_ID',
     'VITE_FIREBASE_STORAGE_BUCKET',
     'VITE_FIREBASE_MESSAGING_SENDER_ID',
     'VITE_FIREBASE_APP_ID',
   ];
 
-  const missingVars = requiredVars.filter(
-    (varName) => !process.env[varName]
-  );
+  const missingVars = requiredVars.filter((varName) => !process.env[varName]);
 
   if (missingVars.length > 0) {
     console.error('Missing Firebase configuration variables:', missingVars);
@@ -120,7 +129,7 @@ export const testFirebaseConnection = async (): Promise<boolean> => {
     const { doc, getDoc } = await import('firebase/firestore');
     const testDoc = doc(db, 'test', 'connection');
     await getDoc(testDoc);
-    
+
     console.log('Firebase connection successful');
     return true;
   } catch (error) {

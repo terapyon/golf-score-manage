@@ -5,7 +5,10 @@ import { useUIStore } from '../../store/uiStore';
 const Toast: React.FC = () => {
   const { toast, hideToast } = useUIStore();
 
-  const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (
+    _event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -26,7 +29,7 @@ const Toast: React.FC = () => {
       <Alert
         onClose={handleClose}
         severity={toast.severity}
-        variant="filled"
+        variant='filled'
         sx={{ width: '100%' }}
       >
         {toast.message}

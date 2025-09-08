@@ -20,7 +20,8 @@
       "Bash(npm run typecheck:*)",
       "Bash(npm run test:*)",
       "Bash(npm audit:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(docker-compose up:*)"
     ],
     "deny": []
   }

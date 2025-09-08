@@ -18,7 +18,8 @@ const FIREBASE_ERROR_MESSAGES: Record<string, string> = {
   'auth/weak-password': 'パスワードが弱すぎます',
   'auth/invalid-email': 'メールアドレスの形式が正しくありません',
   'auth/user-disabled': 'このアカウントは無効化されています',
-  'auth/too-many-requests': 'リクエストが多すぎます。しばらく待ってから再試行してください',
+  'auth/too-many-requests':
+    'リクエストが多すぎます。しばらく待ってから再試行してください',
   'auth/network-request-failed': 'ネットワークエラーが発生しました',
   'auth/popup-closed-by-user': 'ログインがキャンセルされました',
   'auth/popup-blocked': 'ポップアップがブロックされました',
@@ -29,17 +30,17 @@ const FIREBASE_ERROR_MESSAGES: Record<string, string> = {
   'already-exists': 'データが既に存在しています',
   'resource-exhausted': 'リクエスト制限に達しました',
   'failed-precondition': '操作の前提条件が満たされていません',
-  'aborted': '操作が中断されました',
+  aborted: '操作が中断されました',
   'out-of-range': '値が範囲外です',
-  'unimplemented': 'この機能は実装されていません',
-  'internal': 'サーバー内部エラーが発生しました',
-  'unavailable': 'サービスが一時的に利用できません',
+  unimplemented: 'この機能は実装されていません',
+  internal: 'サーバー内部エラーが発生しました',
+  unavailable: 'サービスが一時的に利用できません',
   'data-loss': 'データの損失が発生しました',
-  'unauthenticated': '認証が必要です',
+  unauthenticated: '認証が必要です',
 
   // Network errors
   'network-error': 'ネットワークエラーが発生しました',
-  'timeout': 'リクエストがタイムアウトしました',
+  timeout: 'リクエストがタイムアウトしました',
   'connection-failed': '接続に失敗しました',
 };
 
@@ -113,95 +114,115 @@ export function useErrorHandler() {
   }, []);
 
   // エラーハンドリング
-  const handleError = useCallback((
-    error: any,
-    options: {
-      silent?: boolean;
-      customMessage?: string;
-      showRetry?: boolean;
-      onRetry?: () => void;
-    } = {}
-  ) => {
-    const { silent = false, customMessage, showRetry = false, onRetry } = options;
+  const handleError = useCallback(
+    (
+      error: any,
+      options: {
+        silent?: boolean;
+        customMessage?: string;
+        showRetry?: boolean;
+        onRetry?: () => void;
+      } = {}
+    ) => {
+      const {
+        silent = false,
+        customMessage,
+        showRetry = false,
+        onRetry,
+      } = options;
 
-    console.error('Application Error:', error);
+      console.error('Application Error:', error);
 
-    if (silent) return;
+      if (silent) return;
 
-    const message = customMessage || getErrorMessage(error);
-    const retryable = isRetryable(error);
+      const message = customMessage || getErrorMessage(error);
+      const retryable = isRetryable(error);
 
-    // エラー詳細をコンソールに出力（開発環境）
-    if (process.env.NODE_ENV === 'development') {
-      console.group('🚨 Error Details');
-      console.error('Error object:', error);
-      console.error('Error code:', error?.code);
-      console.error('Error message:', error?.message);
-      console.error('Error stack:', error?.stack);
-      console.error('Is retryable:', retryable);
-      console.groupEnd();
-    }
+      // エラー詳細をコンソールに出力（開発環境）
+      if (process.env.NODE_ENV === 'development') {
+        console.group('🚨 Error Details');
+        console.error('Error object:', error);
+        console.error('Error code:', error?.code);
+        console.error('Error message:', error?.message);
+        console.error('Error stack:', error?.stack);
+        console.error('Is retryable:', retryable);
+        console.groupEnd();
+      }
 
-    // トーストでエラー表示
-    showToast(message, 'error');
+      // トーストでエラー表示
+      showToast(message, 'error');
 
-    // エラーレポーティング（本番環境）
-    if (process.env.NODE_ENV === 'production') {
-      // TODO: エラーレポーティングサービス（Sentry等）への送信
-      // reportError(error);
-    }
-  }, [getErrorMessage, isRetryable, showToast]);
+      // エラーレポーティング（本番環境）
+      if (process.env.NODE_ENV === 'production') {
+        // TODO: エラーレポーティングサービス（Sentry等）への送信
+        // reportError(error);
+      }
+    },
+    [getErrorMessage, isRetryable, showToast]
+  );
 
   // 非同期エラーハンドリング
-  const handleAsyncError = useCallback(async (
-    asyncFn: () => Promise<any>,
-    options: {
-      silent?: boolean;
-      customMessage?: string;
-      showRetry?: boolean;
-      maxRetries?: number;
-    } = {}
-  ) => {
-    const { maxRetries = 0, ...restOptions } = options;
-    let lastError: any;
-    let retryCount = 0;
+  const handleAsyncError = useCallback(
+    async (
+      asyncFn: () => Promise<any>,
+      options: {
+        silent?: boolean;
+        customMessage?: string;
+        showRetry?: boolean;
+        maxRetries?: number;
+      } = {}
+    ) => {
+      const { maxRetries = 0, ...restOptions } = options;
+      let lastError: any;
+      let retryCount = 0;
 
-    while (retryCount <= maxRetries) {
-      try {
-        return await asyncFn();
-      } catch (error) {
-        lastError = error;
-        
-        if (retryCount < maxRetries && isRetryable(error)) {
-          retryCount++;
-          // 指数バックオフ
-          const delay = Math.min(1000 * Math.pow(2, retryCount - 1), 5000);
-          await new Promise(resolve => setTimeout(resolve, delay));
-          continue;
+      while (retryCount <= maxRetries) {
+        try {
+          return await asyncFn();
+        } catch (error) {
+          lastError = error;
+
+          if (retryCount < maxRetries && isRetryable(error)) {
+            retryCount++;
+            // 指数バックオフ
+            const delay = Math.min(1000 * Math.pow(2, retryCount - 1), 5000);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            continue;
+          }
+
+          break;
         }
-        
-        break;
       }
-    }
 
-    handleError(lastError, restOptions);
-    throw lastError;
-  }, [handleError, isRetryable]);
+      handleError(lastError, restOptions);
+      throw lastError;
+    },
+    [handleError, isRetryable]
+  );
 
   // 成功メッセージ表示
-  const showSuccess = useCallback((message: string) => {
-    showToast(message, 'success');
-  }, [showToast]);
+  const showSuccess = useCallback(
+    (message: string) => {
+      showToast(message, 'success');
+    },
+    [showToast]
+  );
 
   // 警告メッセージ表示
-  const showWarning = useCallback((message: string) => {
-    showToast(message, 'warning');
-  }, [showToast]);
+  const showWarning = useCallback(
+    (message: string) => {
+      showToast(message, 'warning');
+    },
+    [showToast]
+  );
 
   // 情報メッセージ表示
-  const showInfo = useCallback((message: string) => {
-    showToast(message, 'info');
-  }, [showToast]);
+  const showInfo = useCallback(
+    (message: string) => {
+      showToast(message, 'info');
+    },
+    [showToast]
+  );
 
   return {
     handleError,

@@ -39,7 +39,7 @@ export const AutoSaveIndicator: React.FC<AutoSaveIndicatorProps> = ({
     switch (status.status) {
       case 'saving':
         return {
-          icon: <SyncIcon className="animate-spin" />,
+          icon: <SyncIcon className='animate-spin' />,
           label: '保存中...',
           color: 'info' as const,
         };
@@ -93,18 +93,20 @@ export const AutoSaveIndicator: React.FC<AutoSaveIndicatorProps> = ({
         <Chip
           icon={config.icon}
           label={
-            <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="body2">{config.label}</Typography>
-              {showTimestamp && status.lastSaved && status.status === 'saved' && (
-                <Typography variant="caption" color="text.secondary">
-                  {formatTimestamp(status.lastSaved)}
-                </Typography>
-              )}
+            <Box display='flex' alignItems='center' gap={1}>
+              <Typography variant='body2'>{config.label}</Typography>
+              {showTimestamp &&
+                status.lastSaved &&
+                status.status === 'saved' && (
+                  <Typography variant='caption' color='text.secondary'>
+                    {formatTimestamp(status.lastSaved)}
+                  </Typography>
+                )}
             </Box>
           }
           color={config.color}
           variant={status.status === 'saving' ? 'filled' : 'outlined'}
-          size="small"
+          size='small'
         />
       </Box>
     </Fade>
@@ -147,7 +149,8 @@ export function useAutoSave<T>(
       } catch (error) {
         setStatus({
           status: 'error',
-          message: error instanceof Error ? error.message : '保存に失敗しました',
+          message:
+            error instanceof Error ? error.message : '保存に失敗しました',
         });
         onError?.(error);
       }

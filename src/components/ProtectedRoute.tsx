@@ -15,10 +15,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   if (loading) {
     return (
       <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        minHeight='100vh'
       >
         <CircularProgress />
       </Box>
@@ -28,7 +28,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   // 未認証の場合、ログインページにリダイレクト
   // 現在のパスを state として保存し、ログイン後に元のページに戻れるようにする
   if (!currentUser) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to='/login' state={{ from: location }} replace />;
   }
 
   // 認証済みの場合、子コンポーネントを表示

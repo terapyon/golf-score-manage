@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createMockRound, createMockCourse, createMockUser } from '@/utils/test-utils';
+import {
+  createMockRound,
+  createMockCourse,
+  createMockUser,
+} from '@/utils/test-utils';
 import type { RoundFormData, RoundFilters } from '@/types';
 
 // Firebase Firestoreのモック設定
@@ -58,7 +62,9 @@ describe('RoundService', () => {
       vi.mocked(addDoc).mockResolvedValue({ id: 'new-round-id' } as any);
 
       // 関数が正常に呼び出せることを確認
-      await expect(RoundService.createRound(mockUser.uid, mockRoundFormData)).resolves.not.toThrow();
+      await expect(
+        RoundService.createRound(mockUser.uid, mockRoundFormData)
+      ).resolves.not.toThrow();
     });
   });
 

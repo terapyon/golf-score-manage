@@ -6,10 +6,10 @@ export const queryClient = new QueryClient({
     queries: {
       // ステイルタイム（データが古いと判定されるまでの時間）
       staleTime: 5 * 60 * 1000, // 5分
-      
+
       // キャッシュタイム（メモリからデータが削除されるまでの時間）
       gcTime: 10 * 60 * 1000, // 10分（旧cacheTime）
-      
+
       // リトライ設定
       retry: (failureCount, error: any) => {
         // 400番台のエラーはリトライしない
@@ -19,10 +19,10 @@ export const queryClient = new QueryClient({
         // 3回まで再試行
         return failureCount < 3;
       },
-      
+
       // リトライ間隔
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-      
+
       // リフェッチ設定
       refetchOnWindowFocus: false, // ウィンドウフォーカス時の自動リフェッチを無効
       refetchOnMount: 'always', // マウント時は常にリフェッチ
@@ -31,7 +31,7 @@ export const queryClient = new QueryClient({
     mutations: {
       // ミューテーションのリトライ設定
       retry: 1,
-      
+
       // ミューテーションのタイムアウト
       networkMode: 'online',
     },

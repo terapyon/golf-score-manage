@@ -6,11 +6,13 @@ import React from 'react';
 // テスト用コンポーネント
 const TestComponent = () => {
   const { currentUser, loading } = useAuth();
-  
+
   return (
     <div>
-      <div data-testid="loading">{loading ? 'loading' : 'not-loading'}</div>
-      <div data-testid="user">{currentUser ? currentUser.email : 'no-user'}</div>
+      <div data-testid='loading'>{loading ? 'loading' : 'not-loading'}</div>
+      <div data-testid='user'>
+        {currentUser ? currentUser.email : 'no-user'}
+      </div>
     </div>
   );
 };
@@ -35,7 +37,11 @@ describe('AuthContext', () => {
   it('AuthProviderでラップされた場合にエラーが発生しないこと', () => {
     const TestComponentWithProvider = () => {
       const { currentUser, loading } = useAuth();
-      return <div data-testid="no-error">No error: {loading ? 'loading' : 'ready'}</div>;
+      return (
+        <div data-testid='no-error'>
+          No error: {loading ? 'loading' : 'ready'}
+        </div>
+      );
     };
 
     render(
@@ -49,7 +55,7 @@ describe('AuthContext', () => {
   it('AuthProviderが正常にレンダリングされること', () => {
     const { container } = render(
       <AuthProvider>
-        <div data-testid="test-child">Test Child</div>
+        <div data-testid='test-child'>Test Child</div>
       </AuthProvider>
     );
 

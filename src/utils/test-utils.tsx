@@ -14,8 +14,8 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   queryClient?: QueryClient;
 }
 
-const AllTheProviders = ({ 
-  children, 
+const AllTheProviders = ({
+  children,
   queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -24,8 +24,8 @@ const AllTheProviders = ({
         gcTime: 0,
       },
     },
-  })
-}: { 
+  }),
+}: {
   children: React.ReactNode;
   queryClient?: QueryClient;
 }) => {
@@ -34,9 +34,7 @@ const AllTheProviders = ({
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <BrowserRouter>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
+          <AuthProvider>{children}</AuthProvider>
         </BrowserRouter>
       </ThemeProvider>
     </QueryClientProvider>
@@ -48,11 +46,9 @@ const customRender = (
   options: CustomRenderOptions = {}
 ) => {
   const { queryClient, ...renderOptions } = options;
-  
+
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
-    <AllTheProviders queryClient={queryClient}>
-      {children}
-    </AllTheProviders>
+    <AllTheProviders queryClient={queryClient}>{children}</AllTheProviders>
   );
 
   return render(ui, { wrapper: Wrapper, ...renderOptions });
@@ -198,8 +194,8 @@ export const mockWindow = {
 };
 
 // テスト用ユーティリティ関数
-export const waitForLoadingToFinish = () => 
-  new Promise(resolve => setTimeout(resolve, 0));
+export const waitForLoadingToFinish = () =>
+  new Promise((resolve) => setTimeout(resolve, 0));
 
 export const suppressConsoleError = () => {
   const originalError = console.error;

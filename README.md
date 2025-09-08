@@ -44,10 +44,12 @@ cp .env.local.example .env.local
 #### 方法2: Docker Composeを使用
 ```bash
 # Docker Composeでエミュレータを起動
-docker-compose up firebase-emulator
+docker compose up firebase-emulator
 
 # 別のターミナルでテストデータを投入
-docker-compose run seed-data
+docker compose run seed-data
+
+docker compose up app
 ```
 
 #### 方法3: 手動実行

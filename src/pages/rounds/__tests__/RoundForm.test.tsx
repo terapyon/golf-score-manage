@@ -23,7 +23,7 @@ vi.mock('@/services/firestoreService', () => ({
 
 // React Router のモック
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom') as any;
+  const actual = (await vi.importActual('react-router-dom')) as any;
   return {
     ...actual,
     useNavigate: () => vi.fn(),
@@ -34,10 +34,12 @@ vi.mock('react-router-dom', async () => {
 describe('RoundForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // CourseService のモック設定
-    vi.mocked(firestoreService.CourseService.getCourses).mockResolvedValue(mockCourses);
-    
+    vi.mocked(firestoreService.CourseService.getCourses).mockResolvedValue(
+      mockCourses
+    );
+
     // useAuth モック
     vi.spyOn(AuthContext, 'useAuth').mockReturnValue({
       currentUser: {
@@ -49,10 +51,10 @@ describe('RoundForm', () => {
         preferences: {
           defaultTee: 'レギュラー',
           scoreDisplayMode: 'stroke' as const,
-          notifications: { email: true, push: true }
+          notifications: { email: true, push: true },
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       loading: false,
       login: vi.fn(),
@@ -65,21 +67,21 @@ describe('RoundForm', () => {
 
   it('フォームが正常にレンダリングされること', () => {
     render(<RoundForm />);
-    
+
     // フォームの基本要素が表示されることを確認
     expect(screen.getByText(/新しいラウンド/i)).toBeInTheDocument();
   });
 
   it('新規ラウンド作成モードで初期化されること', () => {
     render(<RoundForm />);
-    
+
     // 新規作成の場合の要素が表示されることを確認
     expect(screen.getByText(/新しいラウンド/i)).toBeInTheDocument();
   });
 
   it('ステッパーが正しく表示されること', () => {
     render(<RoundForm />);
-    
+
     // ステッパーの要素が表示されることを確認
     expect(screen.getAllByText(/基本情報/i)).toHaveLength(2); // ステップラベルとタイトル
     expect(screen.getByText(/プレイヤー情報/i)).toBeInTheDocument();

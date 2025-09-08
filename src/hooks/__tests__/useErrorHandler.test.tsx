@@ -12,18 +12,16 @@ const createWrapper = () => {
       mutations: { retry: false },
     },
   });
-  
+
   return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
 
 // Firebaseエラーのモッククラス
 class MockFirebaseError extends Error {
   code: string;
-  
+
   constructor(code: string, message: string) {
     super(message);
     this.code = code;
@@ -61,9 +59,12 @@ describe('useErrorHandler', () => {
       wrapper: createWrapper(),
     });
 
-    const firebaseError = new MockFirebaseError('auth/user-not-found', 'User not found');
+    const firebaseError = new MockFirebaseError(
+      'auth/user-not-found',
+      'User not found'
+    );
     const message = result.current.getErrorMessage(firebaseError);
-    
+
     expect(message).toBe('ユーザーが見つかりません');
   });
 
@@ -74,7 +75,7 @@ describe('useErrorHandler', () => {
 
     const generalError = new Error('一般的なエラー');
     const message = result.current.getErrorMessage(generalError);
-    
+
     expect(message).toBe('一般的なエラー');
   });
 
@@ -83,9 +84,12 @@ describe('useErrorHandler', () => {
       wrapper: createWrapper(),
     });
 
-    const retryableError = new MockFirebaseError('network-error', 'Network error');
+    const retryableError = new MockFirebaseError(
+      'network-error',
+      'Network error'
+    );
     const isRetryable = result.current.isRetryable(retryableError);
-    
+
     expect(isRetryable).toBe(true);
   });
 
@@ -94,9 +98,12 @@ describe('useErrorHandler', () => {
       wrapper: createWrapper(),
     });
 
-    const nonRetryableError = new MockFirebaseError('auth/user-not-found', 'User not found');
+    const nonRetryableError = new MockFirebaseError(
+      'auth/user-not-found',
+      'User not found'
+    );
     const isRetryable = result.current.isRetryable(nonRetryableError);
-    
+
     expect(isRetryable).toBe(false);
   });
 
@@ -107,7 +114,7 @@ describe('useErrorHandler', () => {
 
     const httpError = { status: 404 }; // messageプロパティを削除
     const message = result.current.getErrorMessage(httpError);
-    
+
     expect(message).toBe('データが見つかりません');
   });
 
@@ -118,7 +125,7 @@ describe('useErrorHandler', () => {
 
     const unknownError = {};
     const message = result.current.getErrorMessage(unknownError);
-    
+
     expect(message).toBe('不明なエラーが発生しました');
   });
 });

@@ -46,16 +46,16 @@ const StatsCard: React.FC<StatsCardProps> = ({
 }) => (
   <Card>
     <CardContent>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
+      <Box display='flex' alignItems='center' justifyContent='space-between'>
         <Box>
-          <Typography color="text.secondary" gutterBottom variant="body2">
+          <Typography color='text.secondary' gutterBottom variant='body2'>
             {title}
           </Typography>
-          <Typography variant="h4" component="div">
+          <Typography variant='h4' component='div'>
             {value}
           </Typography>
           {subtitle && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant='body2' color='text.secondary'>
               {subtitle}
             </Typography>
           )}
@@ -79,10 +79,7 @@ const Dashboard: React.FC = () => {
   const { currentUser } = useAuth();
 
   // ユーザー統計取得
-  const {
-    data: userStats,
-    isLoading: statsLoading,
-  } = useQuery({
+  const { data: userStats, isLoading: statsLoading } = useQuery({
     queryKey: ['userStats', currentUser?.uid],
     queryFn: () => {
       if (!currentUser) return null;
@@ -92,10 +89,7 @@ const Dashboard: React.FC = () => {
   });
 
   // 最近のラウンド取得
-  const {
-    data: recentRounds,
-    isLoading: roundsLoading,
-  } = useQuery({
+  const { data: recentRounds, isLoading: roundsLoading } = useQuery({
     queryKey: ['recentRounds', currentUser?.uid],
     queryFn: () => {
       if (!currentUser) return null;
@@ -108,10 +102,10 @@ const Dashboard: React.FC = () => {
     <Box>
       {/* ウェルカムメッセージ */}
       <Box mb={3}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant='h4' gutterBottom>
           おかえりなさい、{currentUser?.name}さん！
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant='body1' color='text.secondary'>
           今日も素晴らしいゴルフを楽しみましょう
         </Typography>
       </Box>
@@ -122,18 +116,18 @@ const Dashboard: React.FC = () => {
           {statsLoading ? (
             <Card>
               <CardContent>
-                <Skeleton variant="text" width="60%" height={24} />
-                <Skeleton variant="text" width="40%" height={40} />
-                <Skeleton variant="text" width="50%" height={20} />
+                <Skeleton variant='text' width='60%' height={24} />
+                <Skeleton variant='text' width='40%' height={40} />
+                <Skeleton variant='text' width='50%' height={20} />
               </CardContent>
             </Card>
           ) : (
             <StatsCard
-              title="総ラウンド数"
+              title='総ラウンド数'
               value={userStats?.totalRounds || 0}
-              subtitle="ラウンド"
+              subtitle='ラウンド'
               icon={<GolfIcon />}
-              color="primary"
+              color='primary'
             />
           )}
         </Grid>
@@ -141,18 +135,26 @@ const Dashboard: React.FC = () => {
           {statsLoading ? (
             <Card>
               <CardContent>
-                <Skeleton variant="text" width="60%" height={24} />
-                <Skeleton variant="text" width="40%" height={40} />
-                <Skeleton variant="text" width="50%" height={20} />
+                <Skeleton variant='text' width='60%' height={24} />
+                <Skeleton variant='text' width='40%' height={40} />
+                <Skeleton variant='text' width='50%' height={20} />
               </CardContent>
             </Card>
           ) : (
             <StatsCard
-              title="平均スコア"
-              value={userStats?.averageScore ? Math.round(userStats.averageScore * 10) / 10 : '-'}
-              subtitle={userStats?.totalRounds ? 'ストローク' : 'まだラウンドがありません'}
+              title='平均スコア'
+              value={
+                userStats?.averageScore
+                  ? Math.round(userStats.averageScore * 10) / 10
+                  : '-'
+              }
+              subtitle={
+                userStats?.totalRounds
+                  ? 'ストローク'
+                  : 'まだラウンドがありません'
+              }
               icon={<TrendingUpIcon />}
-              color="success"
+              color='success'
             />
           )}
         </Grid>
@@ -160,18 +162,18 @@ const Dashboard: React.FC = () => {
           {statsLoading ? (
             <Card>
               <CardContent>
-                <Skeleton variant="text" width="60%" height={24} />
-                <Skeleton variant="text" width="40%" height={40} />
-                <Skeleton variant="text" width="50%" height={20} />
+                <Skeleton variant='text' width='60%' height={24} />
+                <Skeleton variant='text' width='40%' height={40} />
+                <Skeleton variant='text' width='50%' height={20} />
               </CardContent>
             </Card>
           ) : (
             <StatsCard
-              title="ベストスコア"
+              title='ベストスコア'
               value={userStats?.bestScore || '-'}
               subtitle={userStats?.bestScore ? 'ストローク' : '記録なし'}
               icon={<TrophyIcon />}
-              color="warning"
+              color='warning'
             />
           )}
         </Grid>
@@ -179,18 +181,18 @@ const Dashboard: React.FC = () => {
           {statsLoading ? (
             <Card>
               <CardContent>
-                <Skeleton variant="text" width="60%" height={24} />
-                <Skeleton variant="text" width="40%" height={40} />
-                <Skeleton variant="text" width="50%" height={20} />
+                <Skeleton variant='text' width='60%' height={24} />
+                <Skeleton variant='text' width='40%' height={40} />
+                <Skeleton variant='text' width='50%' height={20} />
               </CardContent>
             </Card>
           ) : (
             <StatsCard
-              title="今年のラウンド"
+              title='今年のラウンド'
               value={userStats?.thisYear?.rounds || 0}
-              subtitle="ラウンド"
+              subtitle='ラウンド'
               icon={<TimelineIcon />}
-              color="secondary"
+              color='secondary'
             />
           )}
         </Grid>
@@ -201,13 +203,13 @@ const Dashboard: React.FC = () => {
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant='h6' gutterBottom>
                 クイックアクション
               </Typography>
-              <Box display="flex" flexDirection="column" gap={2}>
+              <Box display='flex' flexDirection='column' gap={2}>
                 <Button
-                  variant="contained"
-                  size="large"
+                  variant='contained'
+                  size='large'
                   startIcon={<AddIcon />}
                   onClick={() => navigate('/rounds/new')}
                   fullWidth
@@ -215,16 +217,16 @@ const Dashboard: React.FC = () => {
                   新しいラウンドを記録
                 </Button>
                 <Button
-                  variant="outlined"
-                  size="large"
+                  variant='outlined'
+                  size='large'
                   onClick={() => navigate('/rounds')}
                   fullWidth
                 >
                   ラウンド履歴を見る
                 </Button>
                 <Button
-                  variant="outlined"
-                  size="large"
+                  variant='outlined'
+                  size='large'
                   onClick={() => navigate('/profile')}
                   fullWidth
                 >
@@ -239,29 +241,29 @@ const Dashboard: React.FC = () => {
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="h6">
-                  最近のラウンド
-                </Typography>
-                <Button
-                  size="small"
-                  onClick={() => navigate('/rounds')}
-                >
+              <Box
+                display='flex'
+                justifyContent='space-between'
+                alignItems='center'
+                mb={2}
+              >
+                <Typography variant='h6'>最近のラウンド</Typography>
+                <Button size='small' onClick={() => navigate('/rounds')}>
                   すべて見る
                 </Button>
               </Box>
-              
+
               {roundsLoading ? (
                 <Box>
                   {Array.from({ length: 3 }).map((_, index) => (
                     <Box key={index} mb={2}>
-                      <Box display="flex" alignItems="center" gap={2}>
-                        <Skeleton variant="circular" width={40} height={40} />
+                      <Box display='flex' alignItems='center' gap={2}>
+                        <Skeleton variant='circular' width={40} height={40} />
                         <Box flex={1}>
-                          <Skeleton variant="text" width="70%" height={20} />
-                          <Skeleton variant="text" width="50%" height={16} />
+                          <Skeleton variant='text' width='70%' height={20} />
+                          <Skeleton variant='text' width='50%' height={16} />
                         </Box>
-                        <Skeleton variant="text" width={60} height={20} />
+                        <Skeleton variant='text' width={60} height={20} />
                       </Box>
                     </Box>
                   ))}
@@ -289,21 +291,26 @@ const Dashboard: React.FC = () => {
                         primary={round.courseName}
                         secondary={
                           <Box>
-                            <Typography variant="body2" component="span">
+                            <Typography variant='body2' component='span'>
                               {round.playDate}
                             </Typography>
-                            <Typography variant="body2" component="span" sx={{ ml: 1 }}>
+                            <Typography
+                              variant='body2'
+                              component='span'
+                              sx={{ ml: 1 }}
+                            >
                               {round.participants.length}名
                             </Typography>
                           </Box>
                         }
                       />
-                      <Box textAlign="right">
-                        <Typography variant="h6" color="primary">
+                      <Box textAlign='right'>
+                        <Typography variant='h6' color='primary'>
                           {round.totalScore}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {round.totalScore - round.totalPar > 0 ? '+' : ''}{round.totalScore - round.totalPar}
+                        <Typography variant='body2' color='text.secondary'>
+                          {round.totalScore - round.totalPar > 0 ? '+' : ''}
+                          {round.totalScore - round.totalPar}
                         </Typography>
                       </Box>
                     </ListItem>
@@ -311,24 +318,24 @@ const Dashboard: React.FC = () => {
                 </List>
               ) : (
                 <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="center"
-                  justifyContent="center"
+                  display='flex'
+                  flexDirection='column'
+                  alignItems='center'
+                  justifyContent='center'
                   py={4}
-                  color="text.secondary"
+                  color='text.secondary'
                 >
                   <GolfIcon sx={{ fontSize: 48, mb: 2, opacity: 0.5 }} />
-                  <Typography variant="body1" gutterBottom>
+                  <Typography variant='body1' gutterBottom>
                     まだラウンドが記録されていません
                   </Typography>
-                  <Typography variant="body2" textAlign="center">
+                  <Typography variant='body2' textAlign='center'>
                     最初のラウンドを記録して
                     <br />
                     スコア管理を始めましょう！
                   </Typography>
                   <Button
-                    variant="text"
+                    variant='text'
                     startIcon={<AddIcon />}
                     onClick={() => navigate('/rounds/new')}
                     sx={{ mt: 2 }}
@@ -344,33 +351,28 @@ const Dashboard: React.FC = () => {
         {/* プロフィール情報 */}
         <Grid item xs={12}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant='h6' gutterBottom>
               プロフィール情報
             </Typography>
-            <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
-              <Avatar
-                src={currentUser?.avatar}
-                sx={{ width: 64, height: 64 }}
-              >
+            <Box display='flex' alignItems='center' gap={2} flexWrap='wrap'>
+              <Avatar src={currentUser?.avatar} sx={{ width: 64, height: 64 }}>
                 {currentUser?.name?.charAt(0)}
               </Avatar>
               <Box>
-                <Typography variant="h6">
-                  {currentUser?.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='h6'>{currentUser?.name}</Typography>
+                <Typography variant='body2' color='text.secondary'>
                   {currentUser?.email}
                 </Typography>
-                <Box display="flex" gap={1} mt={1}>
+                <Box display='flex' gap={1} mt={1}>
                   <Chip
                     label={`ハンディキャップ: ${currentUser?.handicap}`}
-                    variant="outlined"
-                    size="small"
+                    variant='outlined'
+                    size='small'
                   />
                   <Chip
                     label={`デフォルトティー: ${currentUser?.preferences?.defaultTee || 'レギュラー'}`}
-                    variant="outlined"
-                    size="small"
+                    variant='outlined'
+                    size='small'
                   />
                 </Box>
               </Box>

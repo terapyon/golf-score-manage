@@ -1,4 +1,8 @@
-import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 // 最適化されたクエリフック
@@ -59,7 +63,7 @@ export function useOptimizedRoundsQuery(userId: string, filters: any) {
     select: (data: any) => {
       // データ変換の最適化
       if (!data) return data;
-      
+
       return {
         ...data,
         items: data.items?.map((round: any) => ({
@@ -81,11 +85,13 @@ export function useOptimizedStatsQuery(userId: string) {
     staleTime: 10 * 60 * 1000, // 10分（統計データは頻繁に変わらない）
     select: (data: any) => {
       if (!data) return data;
-      
+
       return {
         ...data,
         // 統計計算の最適化
-        averageScoreRounded: data.averageScore ? Math.round(data.averageScore * 10) / 10 : 0,
+        averageScoreRounded: data.averageScore
+          ? Math.round(data.averageScore * 10) / 10
+          : 0,
         improvementTrend: data.last5Rounds?.improvement || 0,
         isImproving: (data.last5Rounds?.improvement || 0) < 0,
       };
