@@ -42,7 +42,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUIStore } from '../../store/uiStore';
 import { RoundService } from '../../services/firestoreService';
-import { roundFormSchema, type RoundFormData } from '../../utils/validationSchemas';
+import {
+  roundFormSchema,
+  type RoundFormData,
+} from '../../utils/validationSchemas';
 import { RoundParticipant, RoundScore } from '../../types';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
@@ -122,10 +125,7 @@ const RoundForm: React.FC = () => {
     name: 'participants',
   });
 
-  const {
-    fields: scoreFields,
-    update: updateScore,
-  } = useFieldArray({
+  const { fields: scoreFields, update: updateScore } = useFieldArray({
     control,
     name: 'scores',
   });
@@ -190,14 +190,14 @@ const RoundForm: React.FC = () => {
   };
 
   if (isLoading) {
-    return <LoadingSpinner message="ラウンドを保存中..." fullScreen />;
+    return <LoadingSpinner message='ラウンドを保存中...' fullScreen />;
   }
 
   // ステップ1: 基本情報
   const renderBasicInfo = () => (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant='h6' gutterBottom>
           ラウンド基本情報
         </Typography>
       </Grid>
@@ -205,22 +205,24 @@ const RoundForm: React.FC = () => {
       {/* ゴルフ場選択 */}
       <Grid item xs={12}>
         <Controller
-          name="courseId"
+          name='courseId'
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               fullWidth
-              label="ゴルフ場"
-              placeholder="ゴルフ場を選択してください"
+              label='ゴルフ場'
+              placeholder='ゴルフ場を選択してください'
               error={!!errors.courseId}
-              helperText={errors.courseId?.message || '現在はテスト用のダミーコースです'}
+              helperText={
+                errors.courseId?.message || '現在はテスト用のダミーコースです'
+              }
               select
             >
-              <MenuItem value="dummy-course-1">
+              <MenuItem value='dummy-course-1'>
                 🏌️ テストゴルフクラブ（18ホール・パー72）
               </MenuItem>
-              <MenuItem value="dummy-course-2">
+              <MenuItem value='dummy-course-2'>
                 ⛳ サンプルカントリークラブ（18ホール・パー71）
               </MenuItem>
             </TextField>
@@ -231,14 +233,14 @@ const RoundForm: React.FC = () => {
       {/* プレー日 */}
       <Grid item xs={12} sm={6}>
         <Controller
-          name="playDate"
+          name='playDate'
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               fullWidth
-              label="プレー日"
-              type="date"
+              label='プレー日'
+              type='date'
               error={!!errors.playDate}
               helperText={errors.playDate?.message}
               InputLabelProps={{ shrink: true }}
@@ -250,14 +252,14 @@ const RoundForm: React.FC = () => {
       {/* スタート時間 */}
       <Grid item xs={12} sm={6}>
         <Controller
-          name="startTime"
+          name='startTime'
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               fullWidth
-              label="スタート時間"
-              type="time"
+              label='スタート時間'
+              type='time'
               error={!!errors.startTime}
               helperText={errors.startTime?.message}
               InputLabelProps={{ shrink: true }}
@@ -269,26 +271,28 @@ const RoundForm: React.FC = () => {
       {/* ティー選択 */}
       <Grid item xs={12} sm={6}>
         <Controller
-          name="teeName"
+          name='teeName'
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               fullWidth
               select
-              label="ティー"
+              label='ティー'
               error={!!errors.teeName}
               helperText={errors.teeName?.message}
             >
               {teeOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
-                  <Box display="flex" alignItems="center" gap={1}>
+                  <Box display='flex' alignItems='center' gap={1}>
                     <Box
                       width={12}
                       height={12}
-                      borderRadius="50%"
+                      borderRadius='50%'
                       bgcolor={option.color}
-                      border={option.color === 'white' ? '1px solid #ccc' : 'none'}
+                      border={
+                        option.color === 'white' ? '1px solid #ccc' : 'none'
+                      }
                     />
                     {option.label}
                   </Box>
@@ -302,7 +306,7 @@ const RoundForm: React.FC = () => {
       {/* 天気情報 */}
       <Grid item xs={12}>
         <Divider sx={{ my: 2 }} />
-        <Typography variant="subtitle1" gutterBottom>
+        <Typography variant='subtitle1' gutterBottom>
           <WeatherIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
           天気情報（オプション）
         </Typography>
@@ -310,14 +314,14 @@ const RoundForm: React.FC = () => {
 
       <Grid item xs={12} sm={4}>
         <Controller
-          name="weather"
+          name='weather'
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               fullWidth
               select
-              label="天気"
+              label='天気'
               error={!!errors.weather}
               helperText={errors.weather?.message}
             >
@@ -333,20 +337,24 @@ const RoundForm: React.FC = () => {
 
       <Grid item xs={12} sm={4}>
         <Controller
-          name="temperature"
+          name='temperature'
           control={control}
           render={({ field: { onChange, value, ...field } }) => (
             <TextField
               {...field}
               fullWidth
-              label="気温（℃）"
-              type="number"
+              label='気温（℃）'
+              type='number'
               value={value || ''}
-              onChange={(e) => onChange(e.target.value ? Number(e.target.value) : undefined)}
+              onChange={(e) =>
+                onChange(e.target.value ? Number(e.target.value) : undefined)
+              }
               error={!!errors.temperature}
               helperText={errors.temperature?.message}
               InputProps={{
-                startAdornment: <TempIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+                startAdornment: (
+                  <TempIcon sx={{ mr: 1, color: 'text.secondary' }} />
+                ),
               }}
             />
           )}
@@ -355,20 +363,24 @@ const RoundForm: React.FC = () => {
 
       <Grid item xs={12} sm={4}>
         <Controller
-          name="windSpeed"
+          name='windSpeed'
           control={control}
           render={({ field: { onChange, value, ...field } }) => (
             <TextField
               {...field}
               fullWidth
-              label="風速（m/s）"
-              type="number"
+              label='風速（m/s）'
+              type='number'
               value={value || ''}
-              onChange={(e) => onChange(e.target.value ? Number(e.target.value) : undefined)}
+              onChange={(e) =>
+                onChange(e.target.value ? Number(e.target.value) : undefined)
+              }
               error={!!errors.windSpeed}
               helperText={errors.windSpeed?.message}
               InputProps={{
-                startAdornment: <WindIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+                startAdornment: (
+                  <WindIcon sx={{ mr: 1, color: 'text.secondary' }} />
+                ),
               }}
             />
           )}
@@ -381,12 +393,12 @@ const RoundForm: React.FC = () => {
   const renderParticipants = () => (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">
+        <Box display='flex' justifyContent='space-between' alignItems='center'>
+          <Typography variant='h6'>
             プレイヤー情報 ({participantFields.length}/4)
           </Typography>
           <Button
-            variant="outlined"
+            variant='outlined'
             startIcon={<AddIcon />}
             onClick={addParticipant}
             disabled={participantFields.length >= 4}
@@ -398,18 +410,25 @@ const RoundForm: React.FC = () => {
 
       {participantFields.map((field, index) => (
         <Grid item xs={12} key={field.id}>
-          <Card variant="outlined">
+          <Card variant='outlined'>
             <CardContent>
-              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="subtitle1">
+              <Box
+                display='flex'
+                justifyContent='space-between'
+                alignItems='center'
+                mb={2}
+              >
+                <Typography variant='subtitle1'>
                   プレイヤー {index + 1}
-                  {index === 0 && <Chip label="自分" size="small" sx={{ ml: 1 }} />}
+                  {index === 0 && (
+                    <Chip label='自分' size='small' sx={{ ml: 1 }} />
+                  )}
                 </Typography>
                 {index > 0 && (
                   <IconButton
-                    color="error"
+                    color='error'
                     onClick={() => removeParticipant(index)}
-                    size="small"
+                    size='small'
                   >
                     <RemoveIcon />
                   </IconButton>
@@ -425,7 +444,7 @@ const RoundForm: React.FC = () => {
                       <TextField
                         {...field}
                         fullWidth
-                        label="名前"
+                        label='名前'
                         error={!!errors.participants?.[index]?.name}
                         helperText={errors.participants?.[index]?.name?.message}
                         disabled={index === 0}
@@ -443,11 +462,11 @@ const RoundForm: React.FC = () => {
                         {...field}
                         fullWidth
                         select
-                        label="タイプ"
+                        label='タイプ'
                         disabled={index === 0}
                       >
-                        <MenuItem value="registered">登録ユーザー</MenuItem>
-                        <MenuItem value="guest">ゲスト</MenuItem>
+                        <MenuItem value='registered'>登録ユーザー</MenuItem>
+                        <MenuItem value='guest'>ゲスト</MenuItem>
                       </TextField>
                     )}
                   />
@@ -461,12 +480,18 @@ const RoundForm: React.FC = () => {
                       <TextField
                         {...field}
                         fullWidth
-                        label="HC"
-                        type="number"
+                        label='HC'
+                        type='number'
                         value={value || ''}
-                        onChange={(e) => onChange(e.target.value ? Number(e.target.value) : undefined)}
+                        onChange={(e) =>
+                          onChange(
+                            e.target.value ? Number(e.target.value) : undefined
+                          )
+                        }
                         error={!!errors.participants?.[index]?.handicap}
-                        helperText={errors.participants?.[index]?.handicap?.message}
+                        helperText={
+                          errors.participants?.[index]?.handicap?.message
+                        }
                         inputProps={{ min: -10, max: 54 }}
                       />
                     )}
@@ -484,44 +509,55 @@ const RoundForm: React.FC = () => {
   const renderScoreInput = () => (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <Typography variant="h6">スコア入力</Typography>
-          <Box display="flex" gap={1}>
-            <Button size="small" onClick={() => setAllScores(3)}>全パー</Button>
-            <Button size="small" onClick={() => setAllScores(4)}>全ボギー</Button>
-            <Button size="small" onClick={() => setAllScores(5)}>全ダブルボギー</Button>
+        <Box
+          display='flex'
+          justifyContent='space-between'
+          alignItems='center'
+          mb={2}
+        >
+          <Typography variant='h6'>スコア入力</Typography>
+          <Box display='flex' gap={1}>
+            <Button size='small' onClick={() => setAllScores(3)}>
+              全パー
+            </Button>
+            <Button size='small' onClick={() => setAllScores(4)}>
+              全ボギー
+            </Button>
+            <Button size='small' onClick={() => setAllScores(5)}>
+              全ダブルボギー
+            </Button>
           </Box>
         </Box>
       </Grid>
 
       <Grid item xs={12}>
-        <TableContainer component={Paper} variant="outlined">
-          <Table size="small">
+        <TableContainer component={Paper} variant='outlined'>
+          <Table size='small'>
             <TableHead>
               <TableRow>
                 <TableCell>ホール</TableCell>
-                <TableCell align="center">パー</TableCell>
-                <TableCell align="center">ストローク</TableCell>
-                <TableCell align="center">パット</TableCell>
-                <TableCell align="center">FW</TableCell>
-                <TableCell align="center">GIR</TableCell>
-                <TableCell align="center">ペナルティ</TableCell>
+                <TableCell align='center'>パー</TableCell>
+                <TableCell align='center'>ストローク</TableCell>
+                <TableCell align='center'>パット</TableCell>
+                <TableCell align='center'>FW</TableCell>
+                <TableCell align='center'>GIR</TableCell>
+                <TableCell align='center'>ペナルティ</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {scoreFields.map((field, index) => (
                 <TableRow key={field.id}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell align="center">4</TableCell>
-                  <TableCell align="center">
+                  <TableCell align='center'>4</TableCell>
+                  <TableCell align='center'>
                     <Controller
                       name={`scores.${index}.strokes`}
                       control={control}
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          type="number"
-                          size="small"
+                          type='number'
+                          size='small'
                           sx={{ width: 60 }}
                           inputProps={{ min: 1, max: 20 }}
                           error={!!errors.scores?.[index]?.strokes}
@@ -529,24 +565,30 @@ const RoundForm: React.FC = () => {
                       )}
                     />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align='center'>
                     <Controller
                       name={`scores.${index}.putts`}
                       control={control}
                       render={({ field: { onChange, value, ...field } }) => (
                         <TextField
                           {...field}
-                          type="number"
-                          size="small"
+                          type='number'
+                          size='small'
                           sx={{ width: 60 }}
                           value={value || ''}
-                          onChange={(e) => onChange(e.target.value ? Number(e.target.value) : undefined)}
+                          onChange={(e) =>
+                            onChange(
+                              e.target.value
+                                ? Number(e.target.value)
+                                : undefined
+                            )
+                          }
                           inputProps={{ min: 0, max: 10 }}
                         />
                       )}
                     />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align='center'>
                     <Controller
                       name={`scores.${index}.fairwayHit`}
                       control={control}
@@ -554,12 +596,12 @@ const RoundForm: React.FC = () => {
                         <Checkbox
                           checked={value || false}
                           onChange={(e) => onChange(e.target.checked)}
-                          size="small"
+                          size='small'
                         />
                       )}
                     />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align='center'>
                     <Controller
                       name={`scores.${index}.greenInRegulation`}
                       control={control}
@@ -567,23 +609,29 @@ const RoundForm: React.FC = () => {
                         <Checkbox
                           checked={value || false}
                           onChange={(e) => onChange(e.target.checked)}
-                          size="small"
+                          size='small'
                         />
                       )}
                     />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align='center'>
                     <Controller
                       name={`scores.${index}.penalties`}
                       control={control}
                       render={({ field: { onChange, value, ...field } }) => (
                         <TextField
                           {...field}
-                          type="number"
-                          size="small"
+                          type='number'
+                          size='small'
                           sx={{ width: 60 }}
                           value={value || ''}
-                          onChange={(e) => onChange(e.target.value ? Number(e.target.value) : undefined)}
+                          onChange={(e) =>
+                            onChange(
+                              e.target.value
+                                ? Number(e.target.value)
+                                : undefined
+                            )
+                          }
                           inputProps={{ min: 0, max: 10 }}
                         />
                       )}
@@ -599,7 +647,7 @@ const RoundForm: React.FC = () => {
       {/* メモ */}
       <Grid item xs={12}>
         <Controller
-          name="memo"
+          name='memo'
           control={control}
           render={({ field }) => (
             <TextField
@@ -607,8 +655,8 @@ const RoundForm: React.FC = () => {
               fullWidth
               multiline
               rows={3}
-              label="メモ（オプション）"
-              placeholder="ラウンドの感想や気づいたことを記録しましょう"
+              label='メモ（オプション）'
+              placeholder='ラウンドの感想や気づいたことを記録しましょう'
               error={!!errors.memo}
               helperText={errors.memo?.message}
             />
@@ -621,45 +669,51 @@ const RoundForm: React.FC = () => {
   // ステップ4: 確認
   const renderConfirmation = () => {
     const formData = watch();
-    const totalScore = formData.scores.reduce((sum, score) => sum + score.strokes, 0);
+    const totalScore = formData.scores.reduce(
+      (sum, score) => sum + score.strokes,
+      0
+    );
 
     return (
       <Grid container spacing={3}>
         <Grid item xs={12}>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant='h6' gutterBottom>
             ラウンド内容確認
           </Typography>
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <Card variant="outlined">
+          <Card variant='outlined'>
             <CardContent>
-              <Typography variant="subtitle1" gutterBottom>
+              <Typography variant='subtitle1' gutterBottom>
                 基本情報
               </Typography>
               <Box mb={1}>
-                <Typography variant="body2" color="text.secondary">
-                  ゴルフ場: {formData.courseId === 'dummy-course-1' ? 'テストゴルフクラブ' : 'サンプルカントリークラブ'}
+                <Typography variant='body2' color='text.secondary'>
+                  ゴルフ場:{' '}
+                  {formData.courseId === 'dummy-course-1'
+                    ? 'テストゴルフクラブ'
+                    : 'サンプルカントリークラブ'}
                 </Typography>
               </Box>
               <Box mb={1}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   プレー日: {formData.playDate}
                 </Typography>
               </Box>
               <Box mb={1}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   スタート時間: {formData.startTime}
                 </Typography>
               </Box>
               <Box mb={1}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   ティー: {formData.teeName}
                 </Typography>
               </Box>
               {formData.weather && (
                 <Box mb={1}>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant='body2' color='text.secondary'>
                     天気: {formData.weather}
                   </Typography>
                 </Box>
@@ -669,21 +723,21 @@ const RoundForm: React.FC = () => {
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <Card variant="outlined">
+          <Card variant='outlined'>
             <CardContent>
-              <Typography variant="subtitle1" gutterBottom>
+              <Typography variant='subtitle1' gutterBottom>
                 スコア
               </Typography>
               <Box mb={2}>
-                <Typography variant="h4" color="primary">
+                <Typography variant='h4' color='primary'>
                   {totalScore}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   トータルスコア
                 </Typography>
               </Box>
               <Box mb={1}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   プレイヤー: {formData.participants.length}名
                 </Typography>
               </Box>
@@ -711,12 +765,12 @@ const RoundForm: React.FC = () => {
 
   return (
     <Box p={3}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant='h4' gutterBottom>
         {isEditMode ? 'ラウンド編集' : '新しいラウンド'}
       </Typography>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
+        <Alert severity='error' sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
@@ -732,11 +786,11 @@ const RoundForm: React.FC = () => {
         </Stepper>
 
         {/* フォーム内容 */}
-        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        <Box component='form' onSubmit={handleSubmit(onSubmit)}>
           {renderStepContent(activeStep)}
 
           {/* ナビゲーションボタン */}
-          <Box display="flex" justifyContent="space-between" mt={4}>
+          <Box display='flex' justifyContent='space-between' mt={4}>
             <Button
               onClick={handleBack}
               disabled={activeStep === 0}
@@ -745,9 +799,9 @@ const RoundForm: React.FC = () => {
               戻る
             </Button>
 
-            <Box display="flex" gap={2}>
+            <Box display='flex' gap={2}>
               <Button
-                variant="outlined"
+                variant='outlined'
                 onClick={() => navigate('/rounds')}
                 startIcon={<CancelIcon />}
               >
@@ -756,8 +810,8 @@ const RoundForm: React.FC = () => {
 
               {activeStep === steps.length - 1 ? (
                 <Button
-                  type="submit"
-                  variant="contained"
+                  type='submit'
+                  variant='contained'
                   disabled={isSubmitting}
                   startIcon={<SaveIcon />}
                 >
@@ -766,7 +820,7 @@ const RoundForm: React.FC = () => {
               ) : (
                 <Button
                   onClick={handleNext}
-                  variant="contained"
+                  variant='contained'
                   endIcon={<NextIcon />}
                 >
                   次へ

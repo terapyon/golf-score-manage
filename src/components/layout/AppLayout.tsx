@@ -115,7 +115,7 @@ const AppLayout: React.FC = () => {
         }}
       >
         <GolfIcon sx={{ mr: 1, color: 'primary.main' }} />
-        <Typography variant="h6" noWrap>
+        <Typography variant='h6' noWrap>
           ゴルフスコア
         </Typography>
       </Box>
@@ -154,7 +154,7 @@ const AppLayout: React.FC = () => {
     <Box sx={{ display: 'flex' }}>
       {/* アプリバー */}
       <AppBar
-        position="fixed"
+        position='fixed'
         sx={{
           width: { md: `calc(100% - ${UI_CONSTANTS.DRAWER_WIDTH}px)` },
           ml: { md: `${UI_CONSTANTS.DRAWER_WIDTH}px` },
@@ -163,9 +163,9 @@ const AppLayout: React.FC = () => {
         <Toolbar>
           {/* モバイル用メニューボタン */}
           <IconButton
-            color="inherit"
-            aria-label="メニューを開く"
-            edge="start"
+            color='inherit'
+            aria-label='メニューを開く'
+            edge='start'
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { md: 'none' } }}
           >
@@ -173,31 +173,28 @@ const AppLayout: React.FC = () => {
           </IconButton>
 
           {/* ページタイトル */}
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant='h6' noWrap component='div' sx={{ flexGrow: 1 }}>
             {location.pathname === '/' || location.pathname === '/dashboard'
               ? 'ダッシュボード'
               : location.pathname.startsWith('/rounds/new')
-              ? '新規ラウンド'
-              : location.pathname.startsWith('/rounds')
-              ? 'ラウンド管理'
-              : location.pathname.startsWith('/profile')
-              ? 'プロフィール'
-              : 'ゴルフスコア管理'}
+                ? '新規ラウンド'
+                : location.pathname.startsWith('/rounds')
+                  ? 'ラウンド管理'
+                  : location.pathname.startsWith('/profile')
+                    ? 'プロフィール'
+                    : 'ゴルフスコア管理'}
           </Typography>
 
           {/* ユーザーアバター */}
           <IconButton
-            size="large"
-            aria-label="ユーザーメニュー"
-            aria-controls="user-menu"
-            aria-haspopup="true"
+            size='large'
+            aria-label='ユーザーメニュー'
+            aria-controls='user-menu'
+            aria-haspopup='true'
             onClick={handleUserMenuOpen}
-            color="inherit"
+            color='inherit'
           >
-            <Avatar
-              src={currentUser?.avatar}
-              sx={{ width: 32, height: 32 }}
-            >
+            <Avatar src={currentUser?.avatar} sx={{ width: 32, height: 32 }}>
               {currentUser?.name?.charAt(0) || <PersonIcon />}
             </Avatar>
           </IconButton>
@@ -206,7 +203,7 @@ const AppLayout: React.FC = () => {
 
       {/* ユーザーメニュー */}
       <Menu
-        id="user-menu"
+        id='user-menu'
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleUserMenuClose}
@@ -214,14 +211,14 @@ const AppLayout: React.FC = () => {
       >
         <MenuItem onClick={() => navigate('/profile')}>
           <ListItemIcon>
-            <PersonIcon fontSize="small" />
+            <PersonIcon fontSize='small' />
           </ListItemIcon>
           プロフィール
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
-            <LogoutIcon fontSize="small" />
+            <LogoutIcon fontSize='small' />
           </ListItemIcon>
           ログアウト
         </MenuItem>
@@ -229,12 +226,12 @@ const AppLayout: React.FC = () => {
 
       {/* サイドナビゲーション */}
       <Box
-        component="nav"
+        component='nav'
         sx={{ width: { md: UI_CONSTANTS.DRAWER_WIDTH }, flexShrink: { md: 0 } }}
       >
         {/* モバイル用ドロワー */}
         <Drawer
-          variant="temporary"
+          variant='temporary'
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
@@ -253,7 +250,7 @@ const AppLayout: React.FC = () => {
 
         {/* デスクトップ用ドロワー */}
         <Drawer
-          variant="permanent"
+          variant='permanent'
           sx={{
             display: { xs: 'none', md: 'block' },
             '& .MuiDrawer-paper': {
@@ -269,7 +266,7 @@ const AppLayout: React.FC = () => {
 
       {/* メインコンテンツ */}
       <Box
-        component="main"
+        component='main'
         sx={{
           flexGrow: 1,
           p: 3,

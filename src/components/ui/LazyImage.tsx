@@ -65,10 +65,10 @@ export const LazyImage: React.FC<LazyImageProps> = ({
 
   const defaultPlaceholder = (
     <Skeleton
-      variant="rectangular"
+      variant='rectangular'
       width={width || '100%'}
       height={height || 200}
-      animation="wave"
+      animation='wave'
     />
   );
 
@@ -77,17 +77,17 @@ export const LazyImage: React.FC<LazyImageProps> = ({
       ref={imgRef}
       width={width}
       height={height}
-      position="relative"
-      overflow="hidden"
+      position='relative'
+      overflow='hidden'
       className={className}
       style={style}
     >
       {!isVisible && (placeholder || defaultPlaceholder)}
-      
+
       {isVisible && (
         <>
           {!isLoaded && !isError && (placeholder || defaultPlaceholder)}
-          
+
           <img
             src={isError ? fallback : src}
             alt={alt}
@@ -103,7 +103,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
               top: 0,
               left: 0,
             }}
-            loading="lazy"
+            loading='lazy'
           />
         </>
       )}

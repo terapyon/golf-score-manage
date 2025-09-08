@@ -36,10 +36,10 @@ class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          minHeight="60vh"
+          display='flex'
+          alignItems='center'
+          justifyContent='center'
+          minHeight='60vh'
           p={3}
         >
           <Paper
@@ -57,17 +57,17 @@ class ErrorBoundary extends Component<Props, State> {
                 mb: 2,
               }}
             />
-            <Typography variant="h5" gutterBottom>
+            <Typography variant='h5' gutterBottom>
               エラーが発生しました
             </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
+            <Typography variant='body1' color='text.secondary' paragraph>
               申し訳ございません。予期しないエラーが発生しました。
               ページを再読み込みするか、しばらく時間をおいてから再度お試しください。
             </Typography>
-            
+
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <Box
-                component="pre"
+                component='pre'
                 sx={{
                   mt: 2,
                   p: 2,
@@ -83,17 +83,11 @@ class ErrorBoundary extends Component<Props, State> {
               </Box>
             )}
 
-            <Box display="flex" gap={2} justifyContent="center" mt={3}>
-              <Button
-                variant="outlined"
-                onClick={this.handleReset}
-              >
+            <Box display='flex' gap={2} justifyContent='center' mt={3}>
+              <Button variant='outlined' onClick={this.handleReset}>
                 再試行
               </Button>
-              <Button
-                variant="contained"
-                onClick={this.handleReload}
-              >
+              <Button variant='contained' onClick={this.handleReload}>
                 ページを再読み込み
               </Button>
             </Box>

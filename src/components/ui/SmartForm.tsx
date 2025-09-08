@@ -23,11 +23,11 @@ import {
   CheckCircle as CheckIcon,
   Error as ErrorIcon,
 } from '@mui/icons-material';
-import { UseFormReturn } from 'react-hook-form';
+import { UseFormReturn, FieldValues } from 'react-hook-form';
 import { AutoSaveIndicator, useAutoSave } from './AutoSaveIndicator';
 
 // スマートフォームのプロパティ
-interface SmartFormProps<T> {
+interface SmartFormProps<T extends FieldValues> {
   form: UseFormReturn<T>;
   onSubmit: (data: T) => Promise<void>;
   steps?: FormStep<T>[];
@@ -38,7 +38,7 @@ interface SmartFormProps<T> {
   children?: React.ReactNode;
 }
 
-interface FormStep<T> {
+interface FormStep<T extends FieldValues> {
   label: string;
   description?: string;
   fields: (keyof T)[];
@@ -63,7 +63,9 @@ interface SmartFieldProps {
 }
 
 // スマートフィールドコンポーネント
-export const SmartField: React.FC<SmartFieldProps & { form: UseFormReturn<any> }> = ({
+export const SmartField: React.FC<
+  SmartFieldProps & { form: UseFormReturn<any> }
+> = ({
   name,
   label,
   type = 'text',
@@ -91,31 +93,31 @@ export const SmartField: React.FC<SmartFieldProps & { form: UseFormReturn<any> }
   // フィールドの状態アイコン
   const getStatusIcon = () => {
     if (hasError) {
-      return <ErrorIcon color="error" fontSize="small" />;
+      return <ErrorIcon color='error' fontSize='small' />;
     }
     if (required && fieldValue) {
-      return <CheckIcon color="success" fontSize="small" />;
+      return <CheckIcon color='success' fontSize='small' />;
     }
     return null;
   };
 
   return (
-    <Box position="relative">
-      <Box display="flex" alignItems="center" gap={1} mb={1}>
-        <Typography variant="body2" color={hasError ? 'error' : 'text.primary'}>
+    <Box position='relative'>
+      <Box display='flex' alignItems='center' gap={1} mb={1}>
+        <Typography variant='body2' color={hasError ? 'error' : 'text.primary'}>
           {label}
           {required && <span style={{ color: 'red' }}> *</span>}
         </Typography>
         {tooltip && (
           <Tooltip title={tooltip} arrow>
-            <IconButton size="small">
-              <HelpIcon fontSize="small" />
+            <IconButton size='small'>
+              <HelpIcon fontSize='small' />
             </IconButton>
           </Tooltip>
         )}
-        <Box ml="auto">
+        <Box ml='auto'>
           <Fade in={!!getStatusIcon()}>
-            <Box display="flex" alignItems="center">
+            <Box display='flex' alignItems='center'>
               {getStatusIcon()}
             </Box>
           </Fade>
@@ -128,7 +130,7 @@ export const SmartField: React.FC<SmartFieldProps & { form: UseFormReturn<any> }
         type={type}
         placeholder={placeholder}
         error={hasError}
-        helperText={error?.message || helperText}
+        helperText={(error?.message as string) || helperText}
         disabled={disabled || isSubmitting}
         autoComplete={autoComplete}
         multiline={multiline}
@@ -161,7 +163,7 @@ export const SmartField: React.FC<SmartFieldProps & { form: UseFormReturn<any> }
 };
 
 // メインのスマートフォームコンポーネント
-export function SmartForm<T extends Record<string, any>>({
+export function SmartForm<T extends FieldValues>({
   form,
   onSubmit,
   steps = [],
@@ -203,7 +205,7 @@ export function SmartForm<T extends Record<string, any>>({
   // 進捗計算
   const calculateProgress = useCallback(() => {
     if (steps.length === 0) return 0;
-    
+
     let completedFields = 0;
     let totalFields = 0;
 
@@ -211,7 +213,11 @@ export function SmartForm<T extends Record<string, any>>({
       step.fields.forEach((fieldName) => {
         totalFields++;
         const fieldValue = formValues[fieldName];
-        if (fieldValue !== undefined && fieldValue !== null && fieldValue !== '') {
+        if (
+          fieldValue !== undefined &&
+          fieldValue !== null &&
+          fieldValue !== ''
+        ) {
           completedFields++;
         }
       });
@@ -221,13 +227,16 @@ export function SmartForm<T extends Record<string, any>>({
   }, [steps, formValues]);
 
   // ステップの検証
-  const validateStep = useCallback(async (stepIndex: number) => {
-    if (steps.length === 0) return true;
-    
-    const step = steps[stepIndex];
-    const isValid = await trigger(step.fields as any);
-    return isValid;
-  }, [steps, trigger]);
+  const validateStep = useCallback(
+    async (stepIndex: number) => {
+      if (steps.length === 0) return true;
+
+      const step = steps[stepIndex];
+      const isValid = await trigger(step.fields as any);
+      return isValid;
+    },
+    [steps, trigger]
+  );
 
   // 次のステップ
   const handleNext = useCallback(async () => {
@@ -245,20 +254,25 @@ export function SmartForm<T extends Record<string, any>>({
   }, [activeStep]);
 
   // フォーム送信
-  const handleFormSubmit = useCallback(async (data: T) => {
-    try {
-      setIsSubmitting(true);
-      setSubmitError(null);
-      await onSubmit(data);
-    } catch (error) {
-      console.error('Form submission error:', error);
-      setSubmitError(
-        error instanceof Error ? error.message : 'フォームの送信に失敗しました'
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [onSubmit]);
+  const handleFormSubmit = useCallback(
+    async (data: T) => {
+      try {
+        setIsSubmitting(true);
+        setSubmitError(null);
+        await onSubmit(data);
+      } catch (error) {
+        console.error('Form submission error:', error);
+        setSubmitError(
+          error instanceof Error
+            ? error.message
+            : 'フォームの送信に失敗しました'
+        );
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [onSubmit]
+  );
 
   // キーボードショートカット
   useEffect(() => {
@@ -270,7 +284,7 @@ export function SmartForm<T extends Record<string, any>>({
           autoSaveConfig.saveNow();
         }
       }
-      
+
       // Ctrl+Enter で送信
       if (event.ctrlKey && event.key === 'Enter') {
         event.preventDefault();
@@ -287,25 +301,28 @@ export function SmartForm<T extends Record<string, any>>({
   const canProceed = Object.keys(errors).length === 0;
 
   return (
-    <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
+    <Box component='form' onSubmit={handleSubmit(handleFormSubmit)}>
       {/* 自動保存インジケーター */}
-      {enableAutoSave && (
-        <AutoSaveIndicator status={autoSaveConfig.status} />
-      )}
+      {enableAutoSave && <AutoSaveIndicator status={autoSaveConfig.status} />}
 
       {/* 進捗バー */}
       {showProgress && (
         <Box mb={3}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-            <Typography variant="body2" color="text.secondary">
+          <Box
+            display='flex'
+            justifyContent='space-between'
+            alignItems='center'
+            mb={1}
+          >
+            <Typography variant='body2' color='text.secondary'>
               進捗: {Math.round(progress)}%
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant='body2' color='text.secondary'>
               {steps.length > 0 && `${activeStep + 1} / ${steps.length}`}
             </Typography>
           </Box>
           <LinearProgress
-            variant="determinate"
+            variant='determinate'
             value={progress}
             sx={{ height: 8, borderRadius: 4 }}
           />
@@ -314,20 +331,24 @@ export function SmartForm<T extends Record<string, any>>({
 
       {/* エラーメッセージ */}
       <Collapse in={!!submitError}>
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setSubmitError(null)}>
+        <Alert
+          severity='error'
+          sx={{ mb: 2 }}
+          onClose={() => setSubmitError(null)}
+        >
           {submitError}
         </Alert>
       </Collapse>
 
       {/* ステップ式フォーム */}
       {steps.length > 0 ? (
-        <Stepper activeStep={activeStep} orientation="vertical">
+        <Stepper activeStep={activeStep} orientation='vertical'>
           {steps.map((step, index) => (
             <Step key={step.label}>
               <StepLabel>
-                <Typography variant="h6">{step.label}</Typography>
+                <Typography variant='h6'>{step.label}</Typography>
                 {step.description && (
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant='body2' color='text.secondary'>
                     {step.description}
                   </Typography>
                 )}
@@ -338,13 +359,13 @@ export function SmartForm<T extends Record<string, any>>({
                 ) : (
                   <Box py={2}>
                     {/* デフォルトのフィールド表示 */}
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant='body2' color='text.secondary'>
                       Step {index + 1} content would go here
                     </Typography>
                   </Box>
                 )}
-                
-                <Box display="flex" gap={2} mt={3}>
+
+                <Box display='flex' gap={2} mt={3}>
                   <Button
                     disabled={activeStep === 0}
                     onClick={handleBack}
@@ -352,11 +373,11 @@ export function SmartForm<T extends Record<string, any>>({
                   >
                     戻る
                   </Button>
-                  
+
                   {isLastStep ? (
                     <Button
-                      type="submit"
-                      variant="contained"
+                      type='submit'
+                      variant='contained'
                       disabled={isSubmitting || !canProceed}
                       startIcon={<SaveIcon />}
                     >
@@ -364,7 +385,7 @@ export function SmartForm<T extends Record<string, any>>({
                     </Button>
                   ) : (
                     <Button
-                      variant="contained"
+                      variant='contained'
                       onClick={handleNext}
                       disabled={!canProceed}
                       endIcon={<NextIcon />}
@@ -381,11 +402,11 @@ export function SmartForm<T extends Record<string, any>>({
         // 通常のフォーム
         <Box>
           {children}
-          
-          <Box display="flex" justifyContent="flex-end" mt={3}>
+
+          <Box display='flex' justifyContent='flex-end' mt={3}>
             <Button
-              type="submit"
-              variant="contained"
+              type='submit'
+              variant='contained'
               disabled={isSubmitting || !canProceed}
               startIcon={<SaveIcon />}
             >

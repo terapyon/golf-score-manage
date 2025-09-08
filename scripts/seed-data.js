@@ -8,15 +8,25 @@ import {
   setDoc,
   addDoc 
 } from 'firebase/firestore';
+import { 
+  getAuth, 
+  connectAuthEmulator, 
+  createUserWithEmailAndPassword 
+} from 'firebase/auth';
 
 // エミュレーター専用設定
 const firebaseConfig = {
+  apiKey: 'demo-key',
+  authDomain: 'demo-project.firebaseapp.com',
   projectId: 'demo-project',
-  // エミュレータ用の最小設定
+  storageBucket: 'demo-project.appspot.com',
+  messagingSenderId: '123456789',
+  appId: '1:123456789:web:demo'
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 // エミュレーターに強制接続
 try {
@@ -24,6 +34,13 @@ try {
   console.log('🔧 Firestore エミュレーターに接続: firebase-emulator:8080');
 } catch (error) {
   console.log('エミュレーター接続スキップ（既に接続済み）:', error.message);
+}
+
+try {
+  connectAuthEmulator(auth, 'http://firebase-emulator:9099', { disableWarnings: true });
+  console.log('🔧 Auth エミュレーターに接続: firebase-emulator:9099');
+} catch (error) {
+  console.log('Auth エミュレーター接続スキップ（既に接続済み）:', error.message);
 }
 
 // サンプルコースデータ
@@ -261,11 +278,55 @@ function cleanData(obj) {
   return cleaned;
 }
 
+// テストユーザー作成関数
+async function createTestUser() {
+  console.log('👤 テストユーザーを作成中...');
+  
+  const testEmail = 'test@example.com';
+  const testPassword = 'test123456';
+  
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, testEmail, testPassword);
+    const user = userCredential.user;
+    
+    console.log(`✅ テストユーザー作成完了: ${testEmail}`);
+    console.log(`   UID: ${user.uid}`);
+    
+    // ユーザープロフィール情報をFirestoreに追加
+    await setDoc(doc(db, 'users', user.uid), {
+      uid: user.uid,
+      email: testEmail,
+      name: 'テストユーザー',
+      handicap: 15,
+      preferredTees: 'レギュラー',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isActive: true
+    });
+    
+    console.log('✅ テストユーザーのプロフィール情報を作成');
+    
+    return user.uid;
+  } catch (error) {
+    if (error.code === 'auth/email-already-in-use') {
+      console.log('ℹ️ テストユーザーは既に存在します');
+      // 既存ユーザーのUIDを取得するため、ダミーのUIDを返す
+      return 'test-user-123';
+    } else {
+      console.error('❌ テストユーザー作成エラー:', error);
+      throw error;
+    }
+  }
+}
+
 // データ投入メイン関数
 async function seedData() {
   console.log('🌱 サンプルデータの投入を開始...');
   
   try {
+    // 0. テストユーザー作成
+    const testUserId = await createTestUser();
+    
     // 1. コースデータ投入
     console.log('📍 コースデータを投入中...');
     for (const course of sampleCourses) {
@@ -281,7 +342,6 @@ async function seedData() {
     }
     
     // 2. サンプルユーザー用データ
-    const testUserId = 'test-user-123';
     
     // ラウンドデータ投入
     console.log('🏌️ ラウンドデータを投入中...');
@@ -303,7 +363,7 @@ async function seedData() {
     console.log('📝 テスト用ログイン情報:');
     console.log('  Email: test@example.com');
     console.log('  Password: test123456');
-    console.log('  ユーザーID: test-user-123');
+    console.log(`  ユーザーID: ${testUserId}`);
     
   } catch (error) {
     console.error('❌ データ投入エラー:', error);

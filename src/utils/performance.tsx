@@ -1,4 +1,5 @@
 // パフォーマンス監視ユーティリティ
+import React from 'react';
 
 interface PerformanceMetric {
   name: string;
@@ -48,12 +49,15 @@ class PerformanceMonitor {
     if (typeof window === 'undefined' || !window.performance) return;
 
     const observer = () => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
       if (!navigation) return;
 
       const timing: NavigationTiming = {
-        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.navigationStart,
-        loadComplete: navigation.loadEventEnd - navigation.navigationStart,
+        domContentLoaded:
+          navigation.domContentLoadedEventEnd - navigation.fetchStart,
+        loadComplete: navigation.loadEventEnd - navigation.fetchStart,
         firstPaint: 0,
         firstContentfulPaint: 0,
       };
@@ -68,7 +72,9 @@ class PerformanceMonitor {
         }
       });
 
-      this.recordMetric('navigation-timing', timing.domContentLoaded, { timing });
+      this.recordMetric('navigation-timing', timing.domContentLoaded, {
+        timing,
+      });
     };
 
     // DOM読み込み完了後に実行
@@ -199,7 +205,10 @@ class PerformanceMonitor {
   }
 
   // 非同期関数の測定
-  async measureAsyncFunction<T>(name: string, fn: () => Promise<T>): Promise<T> {
+  async measureAsyncFunction<T>(
+    name: string,
+    fn: () => Promise<T>
+  ): Promise<T> {
     const startTime = performance.now();
     const result = await fn();
     const duration = performance.now() - startTime;
@@ -220,7 +229,7 @@ class PerformanceMonitor {
   // メトリクスの取得
   getMetrics(name?: string): PerformanceMetric[] {
     if (name) {
-      return this.metrics.filter(metric => metric.name === name);
+      return this.metrics.filter((metric) => metric.name === name);
     }
     return [...this.metrics];
   }
@@ -230,12 +239,12 @@ class PerformanceMonitor {
     const metrics = this.getMetrics(name);
     if (metrics.length === 0) return null;
 
-    const values = metrics.map(m => m.value);
+    const values = metrics.map((m) => m.value);
     const sum = values.reduce((a, b) => a + b, 0);
     const avg = sum / values.length;
     const min = Math.min(...values);
     const max = Math.max(...values);
-    
+
     // パーセンタイル計算
     const sorted = values.sort((a, b) => a - b);
     const p50 = sorted[Math.floor(sorted.length * 0.5)];
@@ -272,13 +281,18 @@ class PerformanceMonitor {
 
     // カスタムメトリクス
     const customMetrics = this.metrics
-      .filter(m => m.name.startsWith('function-') || m.name.startsWith('api-'))
-      .reduce((acc, metric) => {
-        if (!acc[metric.name]) {
-          acc[metric.name] = this.getMetricStats(metric.name);
-        }
-        return acc;
-      }, {} as Record<string, any>);
+      .filter(
+        (m) => m.name.startsWith('function-') || m.name.startsWith('api-')
+      )
+      .reduce(
+        (acc, metric) => {
+          if (!acc[metric.name]) {
+            acc[metric.name] = this.getMetricStats(metric.name);
+          }
+          return acc;
+        },
+        {} as Record<string, any>
+      );
 
     report.custom = customMetrics;
     return report;
@@ -291,7 +305,7 @@ class PerformanceMonitor {
 
   // 監視の停止
   disconnect() {
-    this.observers.forEach(observer => {
+    this.observers.forEach((observer) => {
       if (observer && typeof observer.disconnect === 'function') {
         observer.disconnect();
       }
@@ -313,17 +327,21 @@ export const performanceMonitor = new PerformanceMonitor();
 // React Hook
 export function usePerformanceMonitor() {
   const measureRender = (componentName: string) => {
-    return (fn: () => void) => performanceMonitor.measureRender(componentName, fn);
+    return (fn: () => void) =>
+      performanceMonitor.measureRender(componentName, fn);
   };
 
   const measureApi = (endpoint: string) => {
-    return (fn: () => Promise<any>) => performanceMonitor.measureApiRequest(endpoint, fn);
+    return (fn: () => Promise<any>) =>
+      performanceMonitor.measureApiRequest(endpoint, fn);
   };
 
   return {
     recordMetric: performanceMonitor.recordMetric.bind(performanceMonitor),
-    measureFunction: performanceMonitor.measureFunction.bind(performanceMonitor),
-    measureAsyncFunction: performanceMonitor.measureAsyncFunction.bind(performanceMonitor),
+    measureFunction:
+      performanceMonitor.measureFunction.bind(performanceMonitor),
+    measureAsyncFunction:
+      performanceMonitor.measureAsyncFunction.bind(performanceMonitor),
     measureRender,
     measureApi,
     getMetrics: performanceMonitor.getMetrics.bind(performanceMonitor),
@@ -337,12 +355,14 @@ export function withPerformanceMonitoring<P extends object>(
   WrappedComponent: React.ComponentType<P>,
   componentName?: string
 ) {
-  const displayName = componentName || WrappedComponent.displayName || WrappedComponent.name;
+  const displayName =
+    componentName || WrappedComponent.displayName || WrappedComponent.name;
 
   return React.memo((props: P) => {
-    return performanceMonitor.measureRender(displayName, () => (
+    const result = performanceMonitor.measureRender(displayName, () => (
       <WrappedComponent {...props} />
     ));
+    return result as unknown as React.ReactElement;
   });
 }
 

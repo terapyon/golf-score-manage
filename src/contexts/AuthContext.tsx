@@ -18,13 +18,13 @@ interface AuthContextType {
   // 状態
   currentUser: AppUser | null;
   loading: boolean;
-  
+
   // 認証関数
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
-  
+
   // プロフィール関数
   updateUserProfile: (data: Partial<AppUser>) => Promise<void>;
 }
@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const fetchUserData = async (firebaseUser: User): Promise<AppUser | null> => {
     try {
       const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-      
+
       if (userDoc.exists()) {
         const userData = userDoc.data();
         return {
@@ -72,7 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           updatedAt: userData.updatedAt?.toDate() || new Date(),
         };
       }
-      
+
       return null;
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -112,7 +112,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<void> => {
     try {
       setLoading(true);
-      await signInWithEmailAndPassword(auth, email, password);
+      console.log('Attempting login with:', { email });
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('Login successful:', { uid: userCredential.user.uid });
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -129,11 +131,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   ): Promise<void> => {
     try {
       setLoading(true);
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
-      
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
       // Firebase Authのプロフィール更新
       await updateProfile(user, { displayName: name });
-      
+
       // Firestoreにユーザードキュメント作成
       await createUserDocument(user, { name });
     } catch (error) {
@@ -150,7 +156,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
       const provider = new GoogleAuthProvider();
       const { user } = await signInWithPopup(auth, provider);
-      
+
       // 既存ユーザーかチェック
       const userData = await fetchUserData(user);
       if (!userData) {
@@ -183,16 +189,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const userRef = doc(db, 'users', currentUser.uid);
-      
+
       const updateData = {
         ...data,
         updatedAt: new Date(),
       };
 
       await updateDoc(userRef, updateData);
-      
+
       // ローカル状態を更新
-      setCurrentUser(prev => prev ? { ...prev, ...updateData } : null);
+      setCurrentUser((prev) => (prev ? { ...prev, ...updateData } : null));
     } catch (error) {
       console.error('Profile update error:', error);
       throw error;
@@ -206,7 +212,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const userData = await fetchUserData(firebaseUser);
-        setCurrentUser(userData);
+        if (!userData) {
+          // Firestoreにユーザーデータがない場合、作成する
+          console.log('User data not found in Firestore, creating...');
+          try {
+            const newUserData = await createUserDocument(firebaseUser, {
+              name: firebaseUser.displayName || 'テストユーザー'
+            });
+            setCurrentUser({
+              uid: newUserData.uid,
+              email: newUserData.email || '',
+              name: newUserData.name,
+              handicap: newUserData.handicap,
+              avatar: newUserData.avatar,
+              preferences: newUserData.preferences,
+              createdAt: newUserData.createdAt,
+              updatedAt: newUserData.updatedAt,
+            });
+          } catch (error) {
+            console.error('Error creating user document:', error);
+            setCurrentUser(null);
+          }
+        } else {
+          setCurrentUser(userData);
+        }
       } else {
         setCurrentUser(null);
       }
@@ -226,9 +255,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     updateUserProfile,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

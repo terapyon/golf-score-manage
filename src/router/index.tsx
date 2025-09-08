@@ -7,10 +7,10 @@ import AppLayout from '../components/layout/AppLayout';
 // ローディングコンポーネント
 const PageLoader: React.FC = () => (
   <Box
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    minHeight="60vh"
+    display='flex'
+    justifyContent='center'
+    alignItems='center'
+    minHeight='60vh'
   >
     <CircularProgress />
   </Box>
@@ -28,11 +28,11 @@ const LazyRoundForm = React.lazy(() => import('../pages/rounds/RoundForm'));
 // エラーページコンポーネント
 const NotFound: React.FC = () => (
   <Box
-    display="flex"
-    flexDirection="column"
-    justifyContent="center"
-    alignItems="center"
-    minHeight="60vh"
+    display='flex'
+    flexDirection='column'
+    justifyContent='center'
+    alignItems='center'
+    minHeight='60vh'
   >
     <h1>404 - ページが見つかりません</h1>
     <p>お探しのページは存在しません。</p>
@@ -41,11 +41,11 @@ const NotFound: React.FC = () => (
 
 const ErrorPage: React.FC = () => (
   <Box
-    display="flex"
-    flexDirection="column"
-    justifyContent="center"
-    alignItems="center"
-    minHeight="60vh"
+    display='flex'
+    flexDirection='column'
+    justifyContent='center'
+    alignItems='center'
+    minHeight='60vh'
   >
     <h1>エラーが発生しました</h1>
     <p>申し訳ございません。エラーが発生しました。</p>
@@ -73,7 +73,7 @@ export const router = createBrowserRouter([
     ),
     errorElement: <ErrorPage />,
   },
-  
+
   // 認証が必要なルート（AppLayoutでラップ）
   {
     path: '/',
@@ -86,7 +86,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/dashboard" replace />,
+        element: <Navigate to='/dashboard' replace />,
       },
       {
         path: 'dashboard',
@@ -143,7 +143,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  
+
   // 404ページ
   {
     path: '*',

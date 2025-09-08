@@ -22,13 +22,16 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '../../contexts/AuthContext';
-import { registerSchema, type RegisterFormData } from '../../utils/validationSchemas';
+import {
+  registerSchema,
+  type RegisterFormData,
+} from '../../utils/validationSchemas';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const { register: registerUser, loginWithGoogle } = useAuth();
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,20 +67,21 @@ const Register: React.FC = () => {
       navigate('/dashboard', { replace: true });
     } catch (err: any) {
       console.error('Registration error:', err);
-      
+
       // Firebaseエラーメッセージを日本語に変換
       let errorMessage = '新規登録に失敗しました。';
-      
+
       if (err.code === 'auth/email-already-in-use') {
         errorMessage = 'このメールアドレスは既に使用されています。';
       } else if (err.code === 'auth/invalid-email') {
         errorMessage = 'メールアドレスの形式が正しくありません。';
       } else if (err.code === 'auth/weak-password') {
-        errorMessage = 'パスワードが弱すぎます。より強固なパスワードを設定してください。';
+        errorMessage =
+          'パスワードが弱すぎます。より強固なパスワードを設定してください。';
       } else if (err.code === 'auth/operation-not-allowed') {
         errorMessage = 'メール/パスワード認証が無効になっています。';
       }
-      
+
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -93,15 +97,16 @@ const Register: React.FC = () => {
       navigate('/dashboard', { replace: true });
     } catch (err: any) {
       console.error('Google login error:', err);
-      
+
       let errorMessage = 'Googleログインに失敗しました。';
-      
+
       if (err.code === 'auth/popup-closed-by-user') {
         errorMessage = 'ログインがキャンセルされました。';
       } else if (err.code === 'auth/popup-blocked') {
-        errorMessage = 'ポップアップがブロックされました。ブラウザの設定を確認してください。';
+        errorMessage =
+          'ポップアップがブロックされました。ブラウザの設定を確認してください。';
       }
-      
+
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -117,16 +122,16 @@ const Register: React.FC = () => {
   };
 
   if (isLoading) {
-    return <LoadingSpinner message="新規登録中..." fullScreen />;
+    return <LoadingSpinner message='新規登録中...' fullScreen />;
   }
 
   return (
     <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="100vh"
-      bgcolor="grey.100"
+      display='flex'
+      alignItems='center'
+      justifyContent='center'
+      minHeight='100vh'
+      bgcolor='grey.100'
       p={2}
     >
       <Paper
@@ -138,12 +143,7 @@ const Register: React.FC = () => {
         }}
       >
         {/* ヘッダー */}
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          mb={3}
-        >
+        <Box display='flex' flexDirection='column' alignItems='center' mb={3}>
           <GolfIcon
             sx={{
               fontSize: 48,
@@ -151,33 +151,33 @@ const Register: React.FC = () => {
               mb: 1,
             }}
           />
-          <Typography variant="h4" component="h1" gutterBottom>
+          <Typography variant='h4' component='h1' gutterBottom>
             新規登録
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant='body2' color='text.secondary'>
             ゴルフスコア管理システム
           </Typography>
         </Box>
 
         {/* エラーメッセージ */}
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity='error' sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
 
         {/* 新規登録フォーム */}
-        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        <Box component='form' onSubmit={handleSubmit(onSubmit)}>
           {/* 名前 */}
           <Controller
-            name="name"
+            name='name'
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
                 fullWidth
-                label="名前"
-                autoComplete="name"
+                label='名前'
+                autoComplete='name'
                 error={!!errors.name}
                 helperText={errors.name?.message}
                 sx={{ mb: 2 }}
@@ -187,15 +187,15 @@ const Register: React.FC = () => {
 
           {/* メールアドレス */}
           <Controller
-            name="email"
+            name='email'
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
                 fullWidth
-                label="メールアドレス"
-                type="email"
-                autoComplete="email"
+                label='メールアドレス'
+                type='email'
+                autoComplete='email'
                 error={!!errors.email}
                 helperText={errors.email?.message}
                 sx={{ mb: 2 }}
@@ -205,24 +205,24 @@ const Register: React.FC = () => {
 
           {/* パスワード */}
           <Controller
-            name="password"
+            name='password'
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
                 fullWidth
-                label="パスワード"
+                label='パスワード'
                 type={showPassword ? 'text' : 'password'}
-                autoComplete="new-password"
+                autoComplete='new-password'
                 error={!!errors.password}
                 helperText={errors.password?.message}
                 InputProps={{
                   endAdornment: (
-                    <InputAdornment position="end">
+                    <InputAdornment position='end'>
                       <IconButton
-                        aria-label="パスワードを表示"
+                        aria-label='パスワードを表示'
                         onClick={togglePasswordVisibility}
-                        edge="end"
+                        edge='end'
                       >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
@@ -236,26 +236,30 @@ const Register: React.FC = () => {
 
           {/* パスワード（確認） */}
           <Controller
-            name="confirmPassword"
+            name='confirmPassword'
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
                 fullWidth
-                label="パスワード（確認）"
+                label='パスワード（確認）'
                 type={showConfirmPassword ? 'text' : 'password'}
-                autoComplete="new-password"
+                autoComplete='new-password'
                 error={!!errors.confirmPassword}
                 helperText={errors.confirmPassword?.message}
                 InputProps={{
                   endAdornment: (
-                    <InputAdornment position="end">
+                    <InputAdornment position='end'>
                       <IconButton
-                        aria-label="パスワードを表示"
+                        aria-label='パスワードを表示'
                         onClick={toggleConfirmPasswordVisibility}
-                        edge="end"
+                        edge='end'
                       >
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        {showConfirmPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -267,21 +271,23 @@ const Register: React.FC = () => {
 
           {/* ハンディキャップ（任意） */}
           <Controller
-            name="handicap"
+            name='handicap'
             control={control}
             render={({ field: { onChange, value, ...field } }) => (
               <TextField
                 {...field}
                 fullWidth
-                label="ハンディキャップ（任意）"
-                type="number"
+                label='ハンディキャップ（任意）'
+                type='number'
                 value={value || ''}
                 onChange={(e) => {
                   const val = e.target.value;
                   onChange(val === '' ? undefined : Number(val));
                 }}
                 error={!!errors.handicap}
-                helperText={errors.handicap?.message || '後から設定することも可能です'}
+                helperText={
+                  errors.handicap?.message || '後から設定することも可能です'
+                }
                 inputProps={{ min: -10, max: 54 }}
                 sx={{ mb: 2 }}
               />
@@ -294,23 +300,21 @@ const Register: React.FC = () => {
               <Checkbox
                 checked={agreeTos}
                 onChange={(e) => setAgreeTos(e.target.checked)}
-                color="primary"
+                color='primary'
               />
             }
             label={
-              <Typography variant="body2">
-                利用規約に同意します
-              </Typography>
+              <Typography variant='body2'>利用規約に同意します</Typography>
             }
             sx={{ mb: 2 }}
           />
 
           {/* 登録ボタン */}
           <Button
-            type="submit"
+            type='submit'
             fullWidth
-            variant="contained"
-            size="large"
+            variant='contained'
+            size='large'
             disabled={isSubmitting || !agreeTos}
             sx={{ mb: 2 }}
           >
@@ -324,8 +328,8 @@ const Register: React.FC = () => {
         {/* Googleログインボタン */}
         <Button
           fullWidth
-          variant="outlined"
-          size="large"
+          variant='outlined'
+          size='large'
           startIcon={<GoogleIcon />}
           onClick={handleGoogleLogin}
           disabled={isLoading}
@@ -335,18 +339,18 @@ const Register: React.FC = () => {
         </Button>
 
         {/* ログインリンク */}
-        <Box textAlign="center">
-          <Typography variant="body2" color="text.secondary">
+        <Box textAlign='center'>
+          <Typography variant='body2' color='text.secondary'>
             既にアカウントをお持ちですか？
           </Typography>
           <Link
-            to="/login"
+            to='/login'
             style={{
               textDecoration: 'none',
               color: 'inherit',
             }}
           >
-            <Button color="primary" sx={{ mt: 1 }}>
+            <Button color='primary' sx={{ mt: 1 }}>
               ログイン
             </Button>
           </Link>
